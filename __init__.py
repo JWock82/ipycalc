@@ -485,8 +485,8 @@ def sscript_curly(symbol, text):
             
             term_list.append(term.strip())
     
-    # Sort the list of terms from longest to shortest. This prevents errors when one term contains
-    # the same characters as part of another term.
+    # Sort the list of terms from longest to shortest. This prevents errors when one term starts
+    # with the same characters as those in a longer term
     term_list = sorted(term_list, key=len)
     term_list.reverse()
 
