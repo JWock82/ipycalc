@@ -485,6 +485,10 @@ def sscript_curly(symbol, text):
             
             term_list.append(term.strip())
     
+    # Sort the list of terms from longest to shortest. This prevents errors when one term contains
+    # the same characters as part of another term.
+    term_list = sorted(term_list, key=len)
+
     # Replace all the discovered symbols with bracketed symbols
     for term in term_list:
         text = text.replace(symbol + term, symbol + '{' + term + '}')
