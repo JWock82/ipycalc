@@ -51,7 +51,7 @@ kPa = ureg.kilopascal
 MPa = ureg.megapascal
 GPa = ureg.gigapascal
 
-units= ['inch', 'ft', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'sec', 'deg', 'rad', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'Pa', 'kPa', 'MPa', 'GPa']
+unit_list = ['inch', 'feet', 'ft', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'sec', 'deg', 'rad', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'Pa', 'kPa', 'MPa', 'GPa']
 
 #%%
 @register_cell_magic
@@ -167,18 +167,18 @@ def process_line(calc_line, local_ns):
     value_format = value_format.strip()
 
     # Format the equation to be Python friendly
+    equation = equation.replace('^prime', '_prime')
     equation = equation.replace('^', '**')
-    equation = equation.replace('\'', '_prime')
 
     # Resolve prime symbols in the variable before we compare it to the equation, which has already
     # had them resolved
-    variable = variable.replace('\'', '_prime')
+    variable = variable.replace('^prime', '_prime')
 
     # `Pint` preferes exponents to the 1/2 power instead of square roots
     equation = alt_sqrt(equation)
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
-    ureg.default_format = '~D'
+    ureg.default_format = '~'
 
     # Determine the requested unit format
     if '*' in value_format:
@@ -260,13 +260,18 @@ def process_line(calc_line, local_ns):
     latex_value = ''
     if value_format != '' or equation == '':
 
-        if units != None:
+        if unit != None:
             latex_value = '=' + funit(eval(value), precision)
         elif precision != None:
             latex_value = '=' + funit((eval(value)*inch/inch).to(inch/inch), precision)
         else:
             latex_value = str(eval(value))
 
+    # This next block allows values to be strings
+    if type(eval(equation)) != ureg.Quantity:
+        if not value.isnumeric():
+            value = '\'' + value + '\''
+    
     # Add the variable and its value to this module's global namespace
     exec('global ' + variable + '; ' + variable + '=' + value)
 
@@ -361,7 +366,7 @@ def to_latex(text):
 
     # Remove the multiplicate dot in front of any units
     text = text.replace('\\cdot{}inch', ' \\ in')
-    for unit in units:
+    for unit in unit_list:
         text = text.replace('\\cdot{}' + unit, ' \\ ' + unit)
 
     # Return the Latex text
