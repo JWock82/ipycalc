@@ -174,7 +174,11 @@ def process_line(calc_line, local_ns):
     # had them resolved
     variable = variable.replace('^prime', '_prime')
 
-    # `Pint` preferes exponents to the 1/2 power instead of square roots
+    # Make a latex copy of the equation and variable before we switch out square root symbols
+    latex_variable = to_latex(variable)
+    latex_equation = to_latex(equation)
+
+    # `Pint` prefers exponents to the 1/2 power instead of square roots
     equation = alt_sqrt(equation)
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
@@ -245,10 +249,6 @@ def process_line(calc_line, local_ns):
     # Format the description
     if description != '':
         description = description + ': '
-
-    # Make copies of the variable and equation that are Latex math friendly
-    latex_variable = to_latex(variable)
-    latex_equation = to_latex(equation)
     
     # Format the variable to be Python friendly
     variable = variable.replace('(', '')
