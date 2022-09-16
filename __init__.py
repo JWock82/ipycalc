@@ -153,12 +153,12 @@ def process_line(calc_line, local_ns):
     if '=' in variable:
         variable, equation = variable.split('=', 1)
     else:
-        variable, equation = '', variable
+        variable, equation = variable, ''
 
     if '->' in equation:
         equation, value_format = equation.split('->', 1)
-    else:
-        equation, value_format = equation, ''
+    elif '->' in variable:
+        variable, value_format = variable.split('->', 1)
 
     # Remove leading and trailing whitespace from all the components except the equation. The
     # equation is a Python expression that may need the spaces.
@@ -198,25 +198,20 @@ def process_line(calc_line, local_ns):
         else:
             unit = None
 
-    # Sometimes the user may want to display a value calculated outside this module. The next line
-    # allows this if the user types an equation that is the same as the variable name. It silences
-    # the display of the equation.
-    if variable == equation.strip():
+    # Sometimes the user may want to display a value without an equation
+    if equation == '':
 
         if unit != None:
-            value = str((eval(equation).to(unit)).magnitude) + '*' + unit
+            value = str((eval(variable).to(unit)).magnitude) + '*' + unit
         elif precision != None:
             # Unitless values require special consideration. Pint leaves values in terms of the
             # units used to calculate them. That means 60 ft / 12 in = 5 ft/in instead of 60.
             # As a workaround we'll convert that quantity to some units that cancel each other out.
             # In cases where there are no units (a pure float) we'll need to tag on some units
             # to make the `to` function available. These units should also cancel each other out.
-            value = str((eval(equation)*inch/inch).to(inch/inch))
+            value = str((eval(variable)*inch/inch).to(inch/inch))
         else:
-            value = str(eval(equation))
-        
-        # Opt to not show the equation in the output - just the value
-        equation = ''
+            value = str(eval(variable))
 
     else:
 
@@ -267,10 +262,11 @@ def process_line(calc_line, local_ns):
         else:
             latex_value = str(eval(value))
 
-    # This next block allows values to be strings
-    if type(eval(equation)) != ureg.Quantity:
-        if not value.isnumeric():
-            value = '\'' + value + '\''
+    # Known issue: The characters '.' and '-' will evaluate as not numeric below
+    # # This next block allows values to be strings
+    # if type(eval(equation)) != ureg.Quantity:
+    #     if not value.isnumeric():
+    #         value = '\'' + value + '\''
     
     # Add the variable and its value to this module's global namespace
     exec('global ' + variable + '; ' + variable + '=' + value)
@@ -321,7 +317,7 @@ def to_latex(text):
     # Define a list of greek symbols
     greek = (['alpha', 'eta', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'theta', 'iota', 'kappa', 'lambda' 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'omega', 
               'Alpha', 'Eta', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Theta', 'Iota', 'Kappa', 'Lambda' 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega'])
-
+    
     # Clean up any greek symbols
     for symbol in greek:
         if symbol in text:
@@ -332,6 +328,9 @@ def to_latex(text):
     text = text.replace('th\\eta', '\\theta')
     text = text.replace('z\\eta', '\\zeta')
     
+    # Take care of any lower case greek psi characters. This is necessary because 'psi' is also a unit
+    text = text.replace('grpsi', '\\psi')
+
     # Switch out Python's exponent symbols for Latex's
     text = text.replace('**', '^')
 
@@ -487,8 +486,7 @@ def sscript_curly(symbol, text):
     
     # Sort the list of terms from longest to shortest. This prevents errors when one term starts
     # with the same characters as those in a longer term
-    term_list = sorted(term_list, key=len)
-    term_list.reverse()
+    term_list = sorted(term_list, key=len, reverse=True)
 
     # Replace all the discovered symbols with bracketed symbols
     for term in term_list:
