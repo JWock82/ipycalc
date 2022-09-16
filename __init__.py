@@ -159,6 +159,8 @@ def process_line(calc_line, local_ns):
         equation, value_format = equation.split('->', 1)
     elif '->' in variable:
         variable, value_format = variable.split('->', 1)
+    else:
+        equation, value_format = equation, ''
 
     # Remove leading and trailing whitespace from all the components except the equation. The
     # equation is a Python expression that may need the spaces.
@@ -186,17 +188,32 @@ def process_line(calc_line, local_ns):
 
     # Determine the requested unit format
     if '*' in value_format:
+        # Both precision and units were requested
         precision, unit = value_format.split('*', 1)
         precision = int(precision)
     elif value_format != '':
+        # Precision was requested without units
         precision, unit = value_format, None
         precision = int(precision)
     else:
+        # No precision and no units were requested
         precision = None
-        if type(eval(equation)) == ureg.Quantity:
-            unit = str(eval(equation).units)
-        else:
-            unit = None
+        if equation != '':
+            # An equation has been provided
+            if type(eval(equation)) == ureg.Quantity:
+                # The evaluated equation carries units
+                unit = str(eval(equation).units)
+            else:
+                # The equation is unitless after evaluation
+                unit = None
+        elif variable != '':
+            # No equation has been provided. We are just displaying a variable
+            if type(eval(variable)) == ureg.Quantity:
+                # The variable carries units
+                unit = str(eval(variable).units)
+            else:
+                # The variable does not carry units
+                unit = None
 
     # Sometimes the user may want to display a value without an equation
     if equation == '':
