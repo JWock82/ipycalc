@@ -11,6 +11,7 @@ ureg.default_format = '~P'  # Shorthand units w/ pretty formatting
 ureg.define('plf = pound_force / foot')
 ureg.define('klf = kip / foot')
 ureg.define('psf = pound_force / foot**2')
+ureg.define('ksi = kip / inch**2')
 ureg.define('ksf = kip / foot**2')
 ureg.define('lbm = pound')
 
@@ -18,6 +19,8 @@ ureg.define('lbm = pound')
 inch = ureg.inch
 ft = ureg.foot
 feet = ureg.foot
+mi = ureg.mile
+ozf = ureg.force_pound/16
 lbf = ureg.force_pound
 lbm = ureg.pound
 kip = ureg.kip
@@ -35,9 +38,11 @@ kipin = ureg.kip*ureg.inch
 kipft = ureg.kip*ureg.foot
 kin = ureg.kip*ureg.inch
 kft = ureg.kip*ureg.foot
+mph = ureg.mile/ureg.hour
 deg = ureg.degree
 rad = ureg.radian
 sec = ureg.second
+h = ureg.hour
 
 # Add some useful metric units
 mm = ureg.millimeter
@@ -51,7 +56,7 @@ kPa = ureg.kilopascal
 MPa = ureg.megapascal
 GPa = ureg.gigapascal
 
-unit_list = ['inch', 'feet', 'ft', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'sec', 'deg', 'rad', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'Pa', 'kPa', 'MPa', 'GPa']
+unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph', 'sec', 'h', 'deg', 'rad', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'Pa', 'kPa', 'MPa', 'GPa']
 
 #%%
 @register_cell_magic
@@ -99,6 +104,8 @@ def sync_namespaces(local_ns):
     local_ns['inch'] = ureg.inch
     local_ns['ft'] = ureg.foot
     local_ns['feet'] = ureg.foot
+    local_ns['mi'] = ureg.mile
+    local_ns['ozf'] = ureg.force_pound/16
     local_ns['lbf'] = ureg.force_pound
     local_ns['lbm'] = ureg.pound
     local_ns['kip'] = ureg.kip
@@ -117,7 +124,9 @@ def sync_namespaces(local_ns):
     local_ns['kipft'] = ureg.kip*ureg.foot
     local_ns['kin'] = ureg.kip*ureg.inch
     local_ns['kft'] = ureg.kip*ureg.foot
+    local_ns['mph'] = ureg.mile/ureg.hour
     local_ns['sec'] = ureg.second
+    local_ns['h'] = ureg.hour
     local_ns['deg'] = ureg.degree
     local_ns['rad'] = ureg.radian
     
@@ -302,7 +311,7 @@ def process_line(calc_line, local_ns):
     
     # There will be a double equals sign if the equation is not being displayed
     latex_text = latex_text.replace('==', '=')
-
+    
     return latex_text
 
 #%%
@@ -475,7 +484,7 @@ def sscript_curly(symbol, text):
 
             # Add all the characters associated with this symbol
             j = i + 1
-            while j < len(text) and text[j] not in ['+', '-', '*', '/', '=', '>', '<', '!', ',' '@']:
+            while j < len(text) and text[j] not in ['+', '-', '*', '/', '=', '>', '<', '!', ',', '@']:
 
                 # Check for parentheses nested within the superscript or subscript
                 if text[j] == '(':
