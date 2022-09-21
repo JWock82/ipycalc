@@ -11,6 +11,7 @@ ureg.default_format = '~P'  # Shorthand units w/ pretty formatting
 ureg.define('plf = pound_force / foot')
 ureg.define('klf = kip / foot')
 ureg.define('psf = pound_force / foot**2')
+ureg.define('pcf = pound_force / foot**3')
 ureg.define('ksi = kip / inch**2')
 ureg.define('ksf = kip / foot**2')
 ureg.define('lbm = pound')
