@@ -43,7 +43,7 @@ mph = ureg.mile/ureg.hour
 deg = ureg.degree
 rad = ureg.radian
 sec = ureg.second
-h = ureg.hour
+hr = ureg.hour
 
 # Add some useful metric units
 mm = ureg.millimeter
@@ -57,7 +57,7 @@ kPa = ureg.kilopascal
 MPa = ureg.megapascal
 GPa = ureg.gigapascal
 
-unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph', 'sec', 'h', 'deg', 'rad', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'Pa', 'kPa', 'MPa', 'GPa']
+unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph', 'sec', 'hr', 'deg', 'rad', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'Pa', 'kPa', 'MPa', 'GPa']
 
 #%%
 @register_cell_magic
@@ -127,7 +127,7 @@ def sync_namespaces(local_ns):
     local_ns['kft'] = ureg.kip*ureg.foot
     local_ns['mph'] = ureg.mile/ureg.hour
     local_ns['sec'] = ureg.second
-    local_ns['h'] = ureg.hour
+    local_ns['hr'] = ureg.hour
     local_ns['deg'] = ureg.degree
     local_ns['rad'] = ureg.radian
     
