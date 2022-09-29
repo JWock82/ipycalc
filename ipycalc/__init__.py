@@ -415,15 +415,15 @@ def process_if(text, level, type):
     # Check if the 'if' is an really an 'if' or if it's an 'elif'
     if type == 'if':
         # Add an 'if' line
-        latex_text = value + '\\textsf{@if@}' + condition + '\\newline'
+        latex_text = value + '\\textsf{@if@}' + condition + '\\\\'
     elif type == 'elif':
         # Add an 'else if' line
-        latex_text = '\\hspace{1cm}'  + '\\textsf{else@}' + value + '\\textsf{@if@}' + condition + '\\newline'
+        latex_text = '\\hspace{1cm}'  + '\\textsf{else@}' + value + '\\textsf{@if@}' + condition + '\\\\'
 
     # Check for an 'else' condition without an 'if' in it
     if '@if@' not in else_text:
         # Add the 'else' text
-        latex_text += '\\hspace{1cm}' + '\\textsf{else@}' + else_text + '\\newline'
+        latex_text += '\\hspace{1cm}' + '\\textsf{else@}' + else_text + '\\\\'
     
     # Evaluate 'if' statements nested in the 'else' statement
     elif else_text != '':
