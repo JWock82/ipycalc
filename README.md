@@ -22,7 +22,7 @@ Key components of the `ipycalc` syntax are:
 Here are a few useful things to keep in mind when using `ipycalc`:
 
 * Subscripts can be added by using the `_` character to indicate the start of a subscript.
-* To stack fractions place the numerator and denominater in parenthesis: (num)/(denom) yields $\frac{num}{denom}$.
+* To stack fractions place the numerator and denominater in parenthesis: (num)/(denom) yields $\dfrac{num}{denom}$.
 * `If` statements and `else` statements are available using python's inline `if` statement notation.
 * Square roots can be displayed using `sqrt`.
 * Prime characters can be displayed using `^prime`.
