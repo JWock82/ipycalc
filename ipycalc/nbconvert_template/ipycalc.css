@@ -1,0 +1,13 @@
+@page {
+    margin: 1in; // margin for each printed piece of paper
+  }
+  
+@page :first {
+    margin-top: 1in; // top margin for first page of paper
+}
+
+@media print {
+    body {
+        margin: 0; // 
+    }
+}

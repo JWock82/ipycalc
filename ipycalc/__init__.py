@@ -1,7 +1,12 @@
+import os
+
 from math import pi, sqrt, sin, cos, asin, acos, atan, tan, sinh, cosh, tanh
 
-from IPython.core.magic import (register_cell_magic, needs_local_scope)
+from IPython.core.magic import (register_cell_magic, register_line_magic, needs_local_scope)
 from IPython.display import display, Latex, HTML
+
+# Import the custom ipycalc nbconvert template
+from ipycalc import ipycalcExporter
 
 # Use pint for units
 import pint
@@ -57,7 +62,9 @@ kPa = ureg.kilopascal
 MPa = ureg.megapascal
 GPa = ureg.gigapascal
 
-unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph', 'sec', 'hr', 'deg', 'rad', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'Pa', 'kPa', 'MPa', 'GPa']
+unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 
+             'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph',
+             'sec', 'hr', 'deg', 'rad', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'Pa', 'kPa', 'MPa', 'GPa']
 
 #%%
 @register_cell_magic
@@ -619,3 +626,16 @@ def funit(value, precision=None):
     
     # If no non-numeric characters were found we're dealing with a unitless value
     return latex_value
+
+@register_line_magic
+@needs_local_scope
+def print_calc(line, local_ns):
+
+    line = line.strip()
+
+    if line == '':
+        dir = os.path.dirname(local_ns['__file__'])
+    else:
+        dir = line
+
+    exec('!jupyter nbconvert ' + local_ns['__file__'] + ' --to=ipycalc')
