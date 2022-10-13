@@ -5,9 +5,6 @@ from math import pi, sqrt, sin, cos, asin, acos, atan, tan, sinh, cosh, tanh
 from IPython.core.magic import (register_cell_magic, register_line_magic, needs_local_scope)
 from IPython.display import display, Latex, HTML
 
-# Import the custom ipycalc nbconvert template
-from ipycalc import ipycalcExporter
-
 # Use pint for units
 import pint
 ureg = pint.UnitRegistry()  # Creates the units registry
@@ -634,8 +631,8 @@ def print_calc(line, local_ns):
     line = line.strip()
 
     if line == '':
-        dir = os.path.dirname(local_ns['__file__'])
+        dir = local_ns['_dh'][0] + '\\test.pdf'
     else:
         dir = line
 
-    exec('!jupyter nbconvert ' + local_ns['__file__'] + ' --to=ipycalc')
+    exec('!jupyter nbconvert \'' + dir + '\' --to=ipycalc')

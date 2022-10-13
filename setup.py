@@ -23,5 +23,6 @@ setuptools.setup(
         'matplotlib',
         'PrettyTable'
     ],
-    python_requires = '>=3.6',
+
+    entry_points={'nbconvert.exporters': 'ipycalc = ipycalc.ipycalcExporter'},
 )
