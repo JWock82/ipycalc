@@ -18,11 +18,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-        install_requires=[
-        'numpy',
-        'matplotlib',
-        'PrettyTable'
-    ],
-
     entry_points={'nbconvert.exporters': 'ipycalc = ipycalc.ipycalcExporter'},
 )
