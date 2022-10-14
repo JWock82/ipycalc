@@ -1,2 +1,2 @@
-ipython
+ipython==7.34.0
 pint
