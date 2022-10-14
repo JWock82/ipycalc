@@ -1,4 +1,5 @@
 import setuptools
+import ipycalc
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -18,5 +19,9 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    entry_points={'nbconvert.exporters': 'ipycalc = ipycalc.ipycalcExporter'},
+    entry_points={
+    'nbconvert.exporters': [
+        'ipycalc = ipycalc.exporter:ipycalcExporter',
+    ]
+    }
 )

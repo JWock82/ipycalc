@@ -7,7 +7,7 @@
 
     "preprocessors": {
 
-      "100-hide-input": {
+      "100-hide": {
         "type": "nbconvert.preprocessors.TagRemovePreprocessor",
           "enabled": true,
           "remove_input_tags": ["hide_input"],

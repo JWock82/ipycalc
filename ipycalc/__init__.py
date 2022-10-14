@@ -631,7 +631,7 @@ def print_calc(line, local_ns):
     line = line.strip()
 
     if line == '':
-        dir = local_ns['_dh'][0] + '\\test.pdf'
+        dir = local_ns['_dh'][0] + '\\ipycalc_Notebook.pdf'
     else:
         dir = line
 
