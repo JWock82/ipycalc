@@ -20,8 +20,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     entry_points={
-    'nbconvert.exporters': [
-        'ipycalc = ipycalc.exporter:ipycalcExporter',
-    ]
+        'nbconvert.exporters': [
+            'ipycalc = ipycalc.exporter:ipycalcExporter',
+        ]
     }
 )
