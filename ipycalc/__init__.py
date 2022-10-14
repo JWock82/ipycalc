@@ -2,6 +2,7 @@ import os
 
 from math import pi, sqrt, sin, cos, asin, acos, atan, tan, sinh, cosh, tanh
 
+import IPython
 from IPython.core.magic import (register_cell_magic, register_line_magic, needs_local_scope)
 from IPython.display import display, Latex, HTML
 
