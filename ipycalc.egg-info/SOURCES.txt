@@ -1,0 +1,8 @@
+LICENSE
+README.md
+setup.py
+ipycalc.egg-info/PKG-INFO
+ipycalc.egg-info/SOURCES.txt
+ipycalc.egg-info/dependency_links.txt
+ipycalc.egg-info/requires.txt
+ipycalc.egg-info/top_level.txt
