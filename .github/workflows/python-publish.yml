@@ -2,7 +2,7 @@
     
     on:
       release:
-        types: [push] # [created]
+        types: [created]
     
     jobs:
       deploy:
