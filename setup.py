@@ -20,10 +20,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
 
-    install_requires=[
-        'IPython',
-    ],
-
     entry_points={
         'nbconvert.exporters': [
             'ipycalc = ipycalc.exporter:ipycalcExporter',
