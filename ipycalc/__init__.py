@@ -624,15 +624,38 @@ def funit(value, precision=None):
     # If no non-numeric characters were found we're dealing with a unitless value
     return latex_value
 
+#%%
+"""
+Set up the nbconvert exporter for the ipycalc template.
+"""
+
+from nbconvert.exporters import WebPDFExporter
+
+class ipycalcExporter(WebPDFExporter):
+    """
+    A custom PDF exporter for ipycalc.
+    """
+
+    custom_template_name = 'ipycalc'
+    pkg_dir = os.path.dirname(__file__)
+    template_dir = os.path.join(pkg_dir, custom_template_name)
+
+    @property
+    def extra_template_basedirs(self):
+        return super()._default_extra_template_basedirs() + [self.template_dir]
+
+    def _template_name_default(self):
+        return os.path.join(self.pkg_dir, self.custom_template_name)
+
 # @register_line_magic
 # @needs_local_scope
-def print_calc(line, local_ns):
+# def print_calc(line, local_ns):
 
-    line = line.strip()
+#     line = line.strip()
 
-    if line == '':
-        dir = local_ns['_dh'][0] + '\\ipycalc_Notebook.pdf'
-    else:
-        dir = line
+#     if line == '':
+#         dir = local_ns['_dh'][0] + '\\ipycalc_Notebook.pdf'
+#     else:
+#         dir = line
 
-    exec('!jupyter nbconvert \'' + dir + '\' --to=ipycalc')
+#     exec('!jupyter nbconvert \'' + dir + '\' --to=ipycalc')
