@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ipycalc",
-    version="0.0.18",
+    version="0.0.19",
     author="D. Craig Brinck, PE, SE",
     author_email="Building.Code@outlook.com",
     description="Clean looking engineering calculations for IPython",
@@ -18,10 +18,12 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-
-    # entry_points={
-    #    'nbconvert.exporters': [
-    #        'ipycalc = ipycalc.exporter:ipycalcExporter',
-    #    ]
-    #}
+    install_requires=[
+        'IPython',
+    ],
+    entry_points={
+        'nbconvert.exporters': [
+            'ipycalc = ipycalc.exporter:ipycalcExporter',
+        ]
+    }
 )
