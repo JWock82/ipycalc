@@ -24,7 +24,8 @@ setuptools.setup(
     ],
     entry_points={
         'nbconvert.exporters': [
-            'ipycalc = ipycalc:ipycalcExporter',
+            'ipycalc = ipycalc.exporters:ipycalcExporter',
         ]
     }
+    include_package_data=True
 )
