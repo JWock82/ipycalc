@@ -1,13 +1,21 @@
 @page {
-    margin: 1in; // margin for each printed piece of paper
+    margin: 0.5in; // margin for each printed piece of paper
   }
   
 @page :first {
-    margin-top: 1in; // top margin for first page of paper
+    margin-top: 0.5in; // top margin for first page of paper
+}
+
+@page {
+    size: letter;
 }
 
 @media print {
     body {
         margin: 0; // 
     }
+}
+
+h1, h2, h3 {
+    break-after: avoid-page;
 }
