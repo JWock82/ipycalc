@@ -2,8 +2,7 @@ import os
 
 from math import pi, sqrt, sin, cos, asin, acos, atan, tan, sinh, cosh, tanh
 
-from IPython import get_ipython
-from IPython.core.magic import (register_line_magic, register_cell_magic, needs_local_scope)
+from IPython.core.magic import (register_cell_magic, needs_local_scope)
 from IPython.display import display, Latex, HTML
 
 # Use pint for units
@@ -625,8 +624,8 @@ def funit(value, precision=None):
     # If no non-numeric characters were found we're dealing with a unitless value
     return latex_value
 
-@register_line_magic
-@needs_local_scope
+# @register_line_magic
+# @needs_local_scope
 def print_calc(line, local_ns):
 
     line = line.strip()
