@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ipycalc",
-    version="0.0.20",
+    version="0.0.21",
     author="D. Craig Brinck, PE, SE",
     author_email="Building.Code@outlook.com",
     description="Clean looking engineering calculations for IPython",
@@ -19,7 +19,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'IPython',
+        'jupyterlab',
+        'nbconvert>=6.0',
     ],
     entry_points={
         'nbconvert.exporters': [
