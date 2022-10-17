@@ -12,20 +12,25 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/JWock82/ipycalc.git",
+    
     packages=setuptools.find_packages(include=['ipycalc', 'ipycalc.*']),
-        classifiers=[
+    
+    classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+
     install_requires=[
         'jupyterlab',
         'nbconvert>=6.0',
     ],
+
+    include_package_data=True,
+
     entry_points={
         'nbconvert.exporters': [
             'ipycalc = ipycalc:ipycalcExporter',
-        ]
-    },
-    include_package_data=True,
+            ]
+    }
 )
