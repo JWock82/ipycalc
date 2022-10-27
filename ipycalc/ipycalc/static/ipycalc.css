@@ -1,6 +1,6 @@
 @page {
     margin: 0.5in; // margin for each printed piece of paper
-  }
+}
   
 @page :first {
     margin-top: 0.5in; // top margin for first page of paper
@@ -12,7 +12,8 @@
 
 @media print {
     body {
-        margin: 0; // 
+        margin: 0; //
+        zoom: 85%;  // Helps wider content fit the paper better
     }
 }
 
