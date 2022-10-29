@@ -198,10 +198,10 @@ def process_line(calc_line, local_ns):
     equation = alt_sqrt(equation)
 
     # Handle manually inserted line breaks placed in the line by the user
-    description.replace('//', '////')
-    equation.replace('//', '')
-    latex_equation.replace('//', '////')
-    reference.replace('//', '////')
+    description.replace('\\', '\\\\')
+    equation.replace('\\', '')
+    latex_equation.replace('\\', '\\\\')
+    reference.replace('\\', '\\\\')
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.default_format = '~'
