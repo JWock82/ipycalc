@@ -198,7 +198,7 @@ def process_line(calc_line, local_ns):
     equation = alt_sqrt(equation)
 
     # Handle manually inserted line breaks placed in the line by the user
-    description.replace('\\', '\\\\')
+    description.replace(r'\\', r'\\\\')
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.default_format = '~'
@@ -320,6 +320,8 @@ def process_line(calc_line, local_ns):
     # There will be a double equals sign if the equation is not being displayed
     latex_text = latex_text.replace('==', '=')
     
+    print(latex_text)
+
     return latex_text
 
 #%%
