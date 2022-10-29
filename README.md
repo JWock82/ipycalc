@@ -26,7 +26,7 @@ Here are a few useful things to keep in mind when using `ipycalc`:
 * `If` statements and `else` statements are available using python's inline `if` statement notation.
 * Square roots can be displayed using `sqrt`.
 * Prime characters can be displayed using `^prime`.
-* If a line gets too long for printing, you can add a line break to the description, equation, or reference by inserting `//`.
+* If a line gets too long for printing, you can add a line break to the description, equation, or reference by inserting `\\`.
 * US units are built in via `Pint`. Basic support is available for some more common metric units.
 * `ipycalc` has a built in `nbconvert` template called `ipycalc` that works just like the `webpdf` template, except it fixes the the bad margins in the `webpdf` template.
 
