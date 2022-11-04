@@ -1,9 +1,9 @@
 @page {
-    margin: 0.5in; // margin for each printed piece of paper
+    margin: 0.5in; /* Margin for each printed piece of paper */
 }
   
 @page :first {
-    margin-top: 0.5in; // top margin for first page of paper
+    margin-top: 0.5in; /* Top margin for first page of paper */
 }
 
 @page {
@@ -11,9 +11,14 @@
 }
 
 @media print {
+
     body {
-        margin: 0; //
-        zoom: 85%;  // Helps wider content fit the paper better
+        margin: 0;
+        zoom: 85%; /* Helps wider content fit paper */
+    }
+
+    .page-break {
+        page-break-before: always; /* Allows user to force page breaks in the notebook using <div class="page-break"></div> in a markdown cell */
     }
 }
 
