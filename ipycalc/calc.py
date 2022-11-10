@@ -7,7 +7,8 @@ from IPython.display import display, Latex, HTML
 
 # Use pint for units
 import pint
-ureg = pint.UnitRegistry('./ipycalc_en.txt')  # Creates the units registry
+directory = os.path.dirname(__file__)
+ureg = pint.UnitRegistry(directory + '\\ipycalc_en.txt')  # Creates the units registry
 ureg.default_system = 'US'  # US Customary unit system
 ureg.default_format = '~P'  # Shorthand units w/ pretty formatting
 ureg.define('plf = pound_force / foot')
