@@ -50,12 +50,12 @@ eulers_number = 2.71828182845904523536028747135266249775724709369995
 
 #### DEFINED EXACT CONSTANTS ####
 
-speed_of_light = 299792458 m/s = c = c_0                      # since 1983
-planck_constant = 6.62607015e-34 J s = ℎ                      # since May 2019
+speed_of_light = 299792458 m/sec = c = c_0                    # since 1983
+planck_constant = 6.62607015e-34 J sec = ℎ                    # since May 2019
 elementary_charge = 1.602176634e-19 C = e                     # since May 2019
 avogadro_number = 6.02214076e23                               # since May 2019
 boltzmann_constant = 1.380649e-23 J K^-1 = k = k_B            # since May 2019
-standard_gravity = 9.80665 m/s^2 = g_0 = g0 = g_n = gravity   # since 1901
+standard_gravity = 9.80665 m/sec^2 = g_0 = g0 = g_n = gravity # since 1901
 standard_atmosphere = 1.01325e5 Pa = atm = atmosphere         # since 1954
 conventional_josephson_constant = 4.835979e14 Hz / V = K_J90  # since Jan 1990
 conventional_von_klitzing_constant = 2.5812807e4 ohm = R_K90  # since Jan 1990
@@ -63,7 +63,7 @@ conventional_von_klitzing_constant = 2.5812807e4 ohm = R_K90  # since Jan 1990
 #### DERIVED EXACT CONSTANTS ####
 # Floating-point conversion may introduce inaccuracies
 
-zeta = c / (cm/s) = ζ
+zeta = c / (cm/sec) = ζ
 dirac_constant = ℎ / (2 * π) = ħ = hbar = atomic_unit_of_action = a_u_action
 avogadro_constant = avogadro_number * mol^-1 = N_A
 molar_gas_constant = k * N_A = R
@@ -84,7 +84,7 @@ wien_frequency_displacement_law_constant = wien_u * k / ℎ
 # The choice of measured constants is based on convenience and on available uncertainty.
 # The uncertainty in the last significant digits is given in parentheses as a comment.
 
-newtonian_constant_of_gravitation = 6.67430e-11 m^3/(kg s^2) = _ = gravitational_constant  # (15)
+newtonian_constant_of_gravitation = 6.67430e-11 m^3/(kg sec^2) = _ = gravitational_constant  # (15)
 rydberg_constant = 1.0973731568160e7 * m^-1 = R_∞ = R_inf                                  # (21)
 electron_g_factor = -2.00231930436256 = g_e                                                # (35)
 atomic_mass_constant = 1.66053906660e-27 kg = m_u                                          # (50)
