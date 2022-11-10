@@ -134,7 +134,7 @@ sesqui- = 1.5
 #### BASE UNITS ####
 
 meter = [length] = m = metre
-second = [time] = s = sec
+second = [time] = sec
 ampere = [current] = A = amp
 candela = [luminosity] = cd = candle
 gram = [mass] = g
