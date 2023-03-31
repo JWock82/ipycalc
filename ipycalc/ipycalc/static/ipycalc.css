@@ -14,7 +14,7 @@
 
     body {
         margin: 0;
-        zoom: 85%; /* Helps wider content fit paper */
+        zoom: 90%; /* Helps wider content fit paper */
     }
 
     .page-break {
