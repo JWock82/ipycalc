@@ -375,9 +375,12 @@ def to_latex(text):
     text = text.replace('**', '^')
 
     # Convert common functions to latex
-    text = text.replace('asin', '\\asin')
-    text = text.replace('acos', '\\acos')
-    text = text.replace('atan', '\\atan')
+    text = text.replace('asin', '\\arcsin')
+    text = text.replace('acos', '\\arccos')
+    text = text.replace('atan', '\\arctan')
+    text = text.replace('arcsin', '\\arcsin')
+    text = text.replace('arccos', '\\arccos')
+    text = text.replace('arctan', '\\arctan')
     text = text.replace('sin', '\\sin')
     text = text.replace('cos', '\\cos')
     text = text.replace('tan', '\\tan')
