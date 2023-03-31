@@ -375,12 +375,12 @@ def to_latex(text):
     text = text.replace('**', '^')
 
     # Convert common functions to latex
-    text = text.replace('sin', '\\sin')
-    text = text.replace('cos', '\\cos')
-    text = text.replace('tan', '\\tan')
     text = text.replace('asin', '\\asin')
     text = text.replace('acos', '\\acos')
     text = text.replace('atan', '\\atan')
+    text = text.replace('sin', '\\sin')
+    text = text.replace('cos', '\\cos')
+    text = text.replace('tan', '\\tan')
     text = text.replace('min', '\\min')
     text = text.replace('max', '\\max')
 
