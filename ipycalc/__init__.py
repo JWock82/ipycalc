@@ -9,9 +9,11 @@ class ipycalcExporter(WebPDFExporter):
 
     export_from_notebook = 'ipycalc'
 
-    @property
-    def template_paths(self):
-        return super().template_paths+[os.path.join(os.path.dirname(__file__), "nbconvert_templates")]
-
-    def _template_file_default(self):
+    @default("template_name")
+    def _template_name_default(self):
         return 'ipycalc'
+
+    @property
+    def _template_paths(self):
+        return super()._template_paths + [os.path.join(os.path.dirname(__file__), "nbconvert_templates")]
+    
