@@ -18,10 +18,13 @@
     }
 
     .page-break {
-        page-break-before: always; /* Allows user to force page breaks in the notebook using <div class="page-break"></div> in a markdown cell */
+        /* Allows user to force page breaks in the notebook using <div class="page-break"></div> in a markdown cell */
+        break-before: always;
+        page-break-before: always; /* legacy CSS for older browsers */
     }
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4, h5, h6 {
     break-after: avoid-page;
+    page-break-after: avoid-page;
 }
