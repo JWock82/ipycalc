@@ -10,7 +10,7 @@ class ipycalcExporter(WebPDFExporter):
     export_from_notebook = 'ipycalc via webpdf'
 
     def _template_name_default(self):
-        return 'ipycalc'
+        return 'woot woot'
 
     @property
     def _template_paths(self):
