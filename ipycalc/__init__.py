@@ -1,4 +1,5 @@
 import os
+from traitlets.config import Config
 from nbconvert.exporters import WebPDFExporter
 
 class ipycalcExporter(WebPDFExporter):
