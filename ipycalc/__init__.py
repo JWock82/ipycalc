@@ -8,7 +8,7 @@ class ipycalcExporter(WebPDFExporter):
 
     custom_template_name = 'ipycalc'
     pkg_dir = os.path.dirname(__file__)
-    template_dir = os.path.join(pkg_dir, custom_template_name)
+    template_dir = os.path.join(pkg_dir, 'nbconvert_templates')
 
     @property
     def extra_template_basedirs(self):
