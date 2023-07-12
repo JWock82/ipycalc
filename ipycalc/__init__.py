@@ -6,12 +6,11 @@ class ipycalcExporter(WebPDFExporter):
     A custom PDF exporter for ipycalc.
     """
 
-    pkg_dir = os.path.dirname(__file__)
-    template_dir = os.path.join(pkg_dir, 'nbconvert_templates')
+    export_from_notebook = 'ipycalc'
 
     @property
-    def extra_template_basedirs(self):
-        return super()._default_extra_template_basedirs() + [self.template_dir]
+    def template_paths(self):
+        return super().template_paths+[os.path.join(os.path.dirname(__file__), "nbconvert_templates")]
 
     def _template_file_default(self):
         return 'index.pdf.j2'
