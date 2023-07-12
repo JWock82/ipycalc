@@ -14,4 +14,4 @@ class ipycalcExporter(WebPDFExporter):
         return super().template_paths+[os.path.join(os.path.dirname(__file__), "nbconvert_templates")]
 
     def _template_file_default(self):
-        return 'index.pdf.j2'
+        return 'ipycalc'
