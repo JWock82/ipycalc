@@ -9,10 +9,16 @@ class ipycalcExporter(WebPDFExporter):
 
     export_from_notebook = 'ipycalc via webpdf'
 
+    def _template_name_default(self):
+        return 'ipycalc'
+
     @property
-    def template_paths(self):
-        return super().template_paths + [os.path.join(os.path.dirname(__file__), "nbconvert_templates")]
+    def _template_paths(self):
+        return super()._template_paths + [os.path.join(os.path.dirname(__file__), "nbconvert_templates")]
     
+    def _default_extra_template_basedirs(self):
+        return [os.path.join(os.path.dirname(__file__), 'nbconvert_templates')]
+
     def _template_file_default(self):
         """
         We want to use the new template we ship with our library.
