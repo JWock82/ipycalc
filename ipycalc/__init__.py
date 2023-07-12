@@ -20,8 +20,6 @@ class ipycalcExporter(WebPDFExporter):
         return [os.path.join(os.path.dirname(__file__), 'nbconvert_templates')]
 
     def _template_file_default(self):
-        """
-        We want to use the new template we ship with our library.
-        """
-        return 'ipycalc.tpl'
+        template_dir = os.path.join(os.path.dirname(__file__), 'nbconvert_templates')
+        return os.path.join(template_dir, 'ipycalc.tpl')
     
