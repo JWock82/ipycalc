@@ -7,9 +7,8 @@ class ipycalcExporter(WebPDFExporter):
     A custom PDF exporter for ipycalc.
     """
 
-    export_from_notebook = 'ipycalc'
+    export_from_notebook = 'ipycalc via webpdf'
 
-    @default("template_name")
     def _template_name_default(self):
         return 'ipycalc'
 
