@@ -1,5 +1,6 @@
 import os
 from nbconvert.exporters import WebPDFExporter
+from nbconvert.exporters.templateexporter import TemplateExporter
 
 class ipycalcExporter(WebPDFExporter):
     """
@@ -9,6 +10,11 @@ class ipycalcExporter(WebPDFExporter):
     custom_template_name = 'nbconvert_template'
     pkg_dir = os.path.dirname(__file__)
     template_dir = os.path.join(pkg_dir, custom_template_name)
+
+    extra_template_paths = [
+        os.path.join(TemplateExporter().template_path, 'lab'),
+        template_dir
+    ]
 
     @property
     def extra_template_basedirs(self):
