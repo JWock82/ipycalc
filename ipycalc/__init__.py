@@ -12,7 +12,7 @@ class ipycalcExporter(WebPDFExporter):
     template_dir = os.path.join(pkg_dir, custom_template_name)
 
     extra_template_paths = [
-        os.path.join(TemplateExporter()._template_paths, 'lab'),
+        os.path.join(TemplateExporter()._template_paths(), 'lab'),
         template_dir
     ]
 
