@@ -1,6 +1,5 @@
 import os
 from nbconvert.exporters import WebPDFExporter
-from traitlets.config import Config
 
 class ipycalcExporter(WebPDFExporter):
     """
@@ -11,9 +10,10 @@ class ipycalcExporter(WebPDFExporter):
     pkg_dir = os.path.dirname(__file__)
     template_dir = os.path.join(pkg_dir, custom_template_name)
 
-    def __init__(self, config=None, **kw):
-        if config is None:
-            config = Config()
-        config.TemplateExporter.template_path.append(self.template_dir)
-        config.TemplateExporter.template_file = 'base.html.j2'
-        super().__init__(config=config, **kw)
+    @property
+    def extra_template_basedirs(self):
+        return super()._default_extra_template_basedirs() + [self.template_dir]
+
+    def _template_name_default(self):
+        return os.path.join(self.pkg_dir, self.custom_template_name)
+    
