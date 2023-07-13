@@ -1,35 +1,18 @@
 import os
-import os.path
+from nbconvert.exporters import WebPDFExporter
 
-from traitlets.config import Config
-from nbconvert.exporters.pdf import PDFExporter
-
-#-----------------------------------------------------------------------------
-# Classes
-#-----------------------------------------------------------------------------
-
-class ipycalcExporter(PDFExporter):
+class ipycalcExporter(WebPDFExporter):
     """
-    An exporter for ipycalc
+    A custom PDF exporter for ipycalc.
     """
 
-    # If this custom exporter should add an entry to the
-    # "File -> Download as" menu in the notebook, give it a name here in the
-    # `export_from_notebook` class member
-    export_from_notebook = "ipycalc"
+    custom_template_name = 'nbconvert_template'
+    pkg_dir = os.path.dirname(__file__)
+    template_dir = os.path.join(pkg_dir, custom_template_name)
 
     @property
-    def _template_paths(self):
-        """
-        We want to inherit from PDF template, and have templates under
-        ``./templates/`` so append it to the search path. (see next section)
+    def extra_template_basedirs(self):
+        return super()._default_extra_template_basedirs() + [self.template_dir]
 
-        Note: nbconvert 7.0 changed ``template_path`` to ``template_paths``
-        """
-        return super()._template_paths + [os.path.join(os.path.dirname(__file__), "nbconvert_templates")]
-
-    def _template_file_default(self):
-        """
-        We want to use the new template we ship with our library.
-        """
-        return os.path.join(os.path.dirname(__file__), 'nbconvert_templates\ipycalc.j2')  # full path to your PDF template file
+    def _template_name_default(self):
+        return os.path.join(self.pkg_dir, self.custom_template_name)

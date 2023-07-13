@@ -1,0 +1,18 @@
+{
+  "base_template": "lab",
+
+  "mimetypes": {
+    "text/html": true
+  },
+
+  "preprocessors": {
+
+    "100-hide": {
+      "type": "nbconvert.preprocessors.TagRemovePreprocessor",
+        "enabled": true,
+        "remove_input_tags": ["hide_input"],
+        "remove_cell_tags": ["hide_cell"]
+    }
+  }
+  
+}
