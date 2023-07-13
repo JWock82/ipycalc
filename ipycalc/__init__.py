@@ -19,14 +19,14 @@ class ipycalcExporter(PDFExporter):
     export_from_notebook = "ipycalc"
 
     @property
-    def template_paths(self):
+    def _template_paths(self):
         """
         We want to inherit from PDF template, and have templates under
         ``./templates/`` so append it to the search path. (see next section)
 
         Note: nbconvert 7.0 changed ``template_path`` to ``template_paths``
         """
-        return super().template_paths + [os.path.join(os.path.dirname(__file__), "nbconvert_templates")]
+        return super()._template_paths + [os.path.join(os.path.dirname(__file__), "nbconvert_templates")]
 
     def _template_file_default(self):
         """
