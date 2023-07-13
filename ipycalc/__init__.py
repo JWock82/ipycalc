@@ -11,7 +11,7 @@ class ipycalcExporter(WebPDFExporter):
     template_dir = os.path.join(pkg_dir, custom_template_name)
 
     @property
-    def extra_template_basedirs(self):
+    def _default_extra_template_basedirs(self):
         return super()._default_extra_template_basedirs() + [self.template_dir]
 
     def _template_name_default(self):
