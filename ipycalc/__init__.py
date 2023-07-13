@@ -2,7 +2,7 @@ import os
 from nbconvert.exporters import WebPDFExporter
 from nbconvert.exporters.templateexporter import TemplateExporter
 
-class ipycalcExporter(WebPDFExporter):
+class ipycalcExporter(WebPDFExporter, TemplateExporter):
     """
     A custom PDF exporter for ipycalc.
     """
@@ -12,13 +12,13 @@ class ipycalcExporter(WebPDFExporter):
     template_dir = os.path.join(pkg_dir, custom_template_name)
 
     extra_template_paths = [
-        os.path.join(TemplateExporter()._template_paths(), 'lab'),
+        os.path.join(TemplateExporter()._template_paths()[0], 'lab'),
         template_dir
     ]
 
     @property
     def extra_template_basedirs(self):
-        return super()._default_extra_template_basedirs() + [self.template_dir]
+        return super(TemplateExporter, self).extra_template_basedirs + self.extra_template_paths
 
     def _template_name_default(self):
-        return os.path.join(self.pkg_dir, self.custom_template_name)
+        return 'lab/index.html.j2'
