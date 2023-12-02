@@ -146,13 +146,18 @@ def sync_namespaces(local_ns):
     local_ns['Pa'] = ureg.pascal
     local_ns['kPa'] = ureg.kilopascal
     local_ns['MPa'] = ureg.megapascal
-    local_ns['GPa'] = ureg.gigapascal    
+    local_ns['GPa'] = ureg.gigapascal
 
     # Provide the IPython console with access to the `funit` method
     local_ns['funit'] = funit
 
 #%%
 def process_line(calc_line, local_ns):
+
+    # Ampersand symbols will mess with latex table formatting unless they have a `\` in front of
+    # them
+    if '&' in calc_line:
+        calc_line = calc_line.replace('&', '\&')
 
     # Break up the line into components: `description`, `variable`, `equation`, `value` and `reference`
     if '#' in calc_line:
