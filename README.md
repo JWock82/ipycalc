@@ -27,6 +27,6 @@ Here are a few useful things to keep in mind when using `ipycalc`:
 * Square roots can be displayed using `sqrt`.
 * Prime characters can be displayed using `^prime`.
 * If a line gets too long for printing, you can add a line break to the description, equation, or reference by inserting `\\`.
-* `ipycalc` has a built in `nbconvert` template called `ipycalc` that works just like the `webpdf` template, except it fixes the the bad margins in the `webpdf` template, reduces the print size to 85% to fit more calcs on a single sheet, and avoids page breaks right after headers.
+* `ipycalc` assists you with printing your notebooks. It has a built in `nbconvert` template called `ipycalc` that works just like the `webpdf` template, except it fixes the the bad margins in the `webpdf` template, and avoids page breaks right after headers. Any cells tagged with `hide_cell` will not be rendered. Any cells tagged with `hide_input` will only show the output upon printing. You can select it from the file menu via "File -> Save and Export Notebook As... -> Ipycalc"
 
 IPycalc is still in its infancy. I'm sure there are bugs, so be cautious and use your head. A special thanks to @connorferster for `handcalcs` which inspired this project: https://github.com/connorferster/handcalcs

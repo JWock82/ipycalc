@@ -8,13 +8,14 @@
 
 @page {
     size: letter;
+    margin: 0; /* Prevents an excessive margin on the page */
 }
 
 @media print {
 
     body {
         margin: 0;
-        zoom: 90%; /* Helps wider content fit paper */
+        zoom: 100%; /* Adjust this value if you want wider content to fit */
     }
 
     .page-break {

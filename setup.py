@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ipycalc",
-    version="0.0.50",
+    version="0.0.51",
     author="D. Craig Brinck, PE, SE",
     author_email="Building.Code@outlook.com",
     description="Clean looking engineering calculations for IPython",

@@ -1,7 +1,7 @@
 import os
 from nbconvert.exporters import WebPDFExporter
 from nbconvert.preprocessors import TagRemovePreprocessor
-
+WebPDFExporter()
 class ipycalcExporter(WebPDFExporter):
     """
     A custom PDF exporter for ipycalc.
@@ -16,16 +16,17 @@ class ipycalcExporter(WebPDFExporter):
     # This is the location where the `ipycalc` template is installed on the user's machine
     template_dir = os.path.join(pkg_dir, custom_template_name)
 
-    def __init__(self):
+    def __init__(self, config=None, **kw):
 
-        # Run the WebPDFExporter constructor
-        super().__init__()
+        super().__init__(config=config, **kw)
 
         # Set up preprocessors
         trp = TagRemovePreprocessor()
         trp.remove_cell_tags=['hide_cell']
         trp.remove_input_tags=['hide_input']
         self.register_preprocessor(trp, enabled=True)
+        self.embed_images=True
+        self.exclude_input_prompt=True
 
     @property
     def _extra_template_basedirs(self):
