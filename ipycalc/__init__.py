@@ -27,6 +27,7 @@ class ipycalcExporter(WebPDFExporter):
         self.register_preprocessor(trp, enabled=True)
         self.embed_images=True
         self.exclude_input_prompt=True
+        self.exclude_output_prompt=True
 
     @property
     def _extra_template_basedirs(self):

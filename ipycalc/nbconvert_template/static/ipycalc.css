@@ -8,7 +8,6 @@
 
 @page {
     size: letter;
-    margin: 0; /* Prevents an excessive margin on the page */
 }
 
 @media print {
