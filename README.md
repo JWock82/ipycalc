@@ -27,7 +27,6 @@ Here are a few useful things to keep in mind when using `ipycalc`:
 * Square roots can be displayed using `sqrt`.
 * Prime characters can be displayed using `^prime`.
 * If a line gets too long for printing, you can add a line break to the description, equation, or reference by inserting `\\`.
-* US units are built in via `Pint`. Basic support is available for some more common metric units.
-* `ipycalc` has a built in `nbconvert` template called `ipycalc` that works just like the `webpdf` template, except it fixes the the bad margins in the `webpdf` template.
+* `ipycalc` has a built in `nbconvert` template called `ipycalc` that works just like the `webpdf` template, except it fixes the the bad margins in the `webpdf` template, reduces the print size to 85% to fit more calcs on a single sheet, and avoids page breaks right after headers.
 
 IPycalc is still in its infancy. I'm sure there are bugs, so be cautious and use your head. A special thanks to @connorferster for `handcalcs` which inspired this project: https://github.com/connorferster/handcalcs

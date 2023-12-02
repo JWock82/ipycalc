@@ -28,6 +28,8 @@ ozf = ureg.force_pound/16
 lbf = ureg.force_pound
 lbm = ureg.pound
 kip = ureg.kip
+ton = ureg.ton
+tonf = ureg.force_ton
 plf = ureg.plf
 klf = ureg.klf
 psi = ureg.force_pound/ureg.inch**2
@@ -55,6 +57,8 @@ m = ureg.meter
 km = ureg.kilometer
 N = ureg.newton
 kN = ureg.kilonewton
+ton = ureg.metric_ton
+tonnef = ureg.force_metric_ton
 Pa = ureg.pascal
 kPa = ureg.kilopascal
 MPa = ureg.megapascal
@@ -116,6 +120,8 @@ def sync_namespaces(local_ns):
     local_ns['lbm'] = ureg.pound
     local_ns['kip'] = ureg.kip
     local_ns['k']= ureg.kip
+    local_ns['ton'] = ureg.ton
+    local_ns['tonf'] = ureg.force_ton
     local_ns['plf'] = ureg.plf
     local_ns['klf'] = ureg.klf
     local_ns['psi'] = ureg.force_pound/ureg.inch**2
@@ -143,10 +149,13 @@ def sync_namespaces(local_ns):
     local_ns['km'] = ureg.kilometer
     local_ns['N'] = ureg.newton
     local_ns['kN'] = ureg.kilonewton
+    local_ns['kg'] = ureg.kilogram
     local_ns['Pa'] = ureg.pascal
     local_ns['kPa'] = ureg.kilopascal
     local_ns['MPa'] = ureg.megapascal
     local_ns['GPa'] = ureg.gigapascal
+    local_ns['tonne'] = ureg.metric_ton
+    local_ns['tonnef'] = ureg.force_metric_ton
 
     # Provide the IPython console with access to the `funit` method
     local_ns['funit'] = funit
@@ -156,8 +165,7 @@ def process_line(calc_line, local_ns):
 
     # Ampersand symbols will mess with latex table formatting unless they have a `\` in front of
     # them
-    if '&' in calc_line:
-        calc_line = calc_line.replace('&', '\&')
+    calc_line = calc_line.replace('&', '\&')
 
     # Break up the line into components: `description`, `variable`, `equation`, `value` and `reference`
     if '#' in calc_line:
@@ -197,8 +205,8 @@ def process_line(calc_line, local_ns):
     variable = variable.replace('^prime', '_prime')
 
     # Make a latex copy of the equation and variable before we switch out square root symbols
-    latex_variable = to_latex(variable)
-    latex_equation = to_latex(equation)
+    latex_variable = python_to_latex(variable)
+    latex_equation = python_to_latex(equation)
 
     # `Pint` prefers exponents to the 1/2 power instead of square roots
     equation = alt_sqrt(equation)
@@ -334,7 +342,14 @@ def process_line(calc_line, local_ns):
     return latex_text
 
 #%%
-def to_latex(text):
+def python_to_latex(text):
+    """Converts python equations to latex equations
+
+    :param text: Python text to be converted to latex.
+    :type text: str
+    :return: Latex text
+    :rtype: str
+    """
     
     # Change spaces we want to keep to the '@' symbol temporarily
     text = text.replace(' if ', '@if@')
@@ -342,6 +357,9 @@ def to_latex(text):
 
     # Add any prime symbols back in
     text = text.replace('_prime', '^{\\prime}')
+
+    # Switch out Python's exponent symbols for Latex's
+    text = text.replace('**', '^')
 
     # Add brackets to superscripts and subscripts if they are missing
     text = sscript_curly('^', text)
@@ -375,8 +393,7 @@ def to_latex(text):
     # Take care of any lower case greek psi characters. This is necessary because 'psi' is also a unit
     text = text.replace('grpsi', '\\psi')
 
-    # Switch out Python's exponent symbols for Latex's
-    text = text.replace('**', '^')
+    #
 
     # Convert common functions to latex
     text = text.replace('sin', '\\sin')
@@ -395,7 +412,7 @@ def to_latex(text):
     text = text.replace('*', ' \\cdot{}')
     text = text.replace('sqrt', '\\sqrt')
 
-    # Change any parentheses to brackets 
+    # Change any parentheses to brackets for `sqrt`, `^`, and `_`
     text = curly_brackets('sqrt', text)
     text = curly_brackets('^', text)
     text = curly_brackets('_', text)
@@ -496,7 +513,7 @@ def sscript_curly(symbol, text):
     term_list = []
     for i, char in enumerate(text):
         
-        # Find any lone symbols
+        # Find any instances of `symbol` that have not already been formatted properly
         if char == symbol and text[i:i+2] != symbol + '(' and text[i:i+2] != symbol + '{':
             
             # Initialize the term after the symbol
