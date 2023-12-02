@@ -4,7 +4,7 @@ Simple Engineering Calculations in Python
 Turn the contents of a Jupyter cell into a formatted calculation by following the steps below:
 
 1. Install `ipycalc` using `pip install ipycalc`
-2. Use `import ipycalc` to bring `ipycalc` into your notebook's namespace.
+2. Use `from ipycalc import calc` to bring `ipycalc` into your notebook's namespace.
 3. Use `%%calc` as the first line of a cell to indicate that you want to run `ipycalc` on the contents of a cell.
 
 The basic calculation syntax is:
