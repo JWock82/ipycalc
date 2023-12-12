@@ -51,6 +51,8 @@ sec = ureg.second
 hr = ureg.hour
 
 # Add some useful metric units
+g = ureg.gram
+kg = ureg.kilogram
 mm = ureg.millimeter
 cm = ureg.centimeter
 m = ureg.meter
@@ -149,6 +151,7 @@ def sync_namespaces(local_ns):
     local_ns['km'] = ureg.kilometer
     local_ns['N'] = ureg.newton
     local_ns['kN'] = ureg.kilonewton
+    local_ns['g'] = ureg.gram
     local_ns['kg'] = ureg.kilogram
     local_ns['Pa'] = ureg.pascal
     local_ns['kPa'] = ureg.kilopascal

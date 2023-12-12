@@ -29,7 +29,6 @@ class ipycalcExporter(WebPDFExporter):
         self.exclude_input_prompt=True
         self.exclude_output_prompt=True
 
-    # We need to add ipycalc's template directory to nbconvert's default extra template directory
     @property
     def _extra_template_basedirs(self):
         return super()._default_extra_template_basedirs() + [self.template_dir]
