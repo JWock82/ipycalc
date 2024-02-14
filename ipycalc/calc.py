@@ -59,6 +59,7 @@ m = ureg.meter
 km = ureg.kilometer
 N = ureg.newton
 kN = ureg.kilonewton
+kgf = ureg.kgf
 ton = ureg.metric_ton
 tonnef = ureg.force_metric_ton
 Pa = ureg.pascal
@@ -68,7 +69,7 @@ GPa = ureg.gigapascal
 
 unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 
              'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph',
-             'sec', 'hr', 'deg', 'rad', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'Pa', 'kPa', 'MPa', 'GPa']
+             'sec', 'hr', 'deg', 'rad', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'Pa', 'kPa', 'MPa', 'GPa']
 
 #%%
 @register_cell_magic
