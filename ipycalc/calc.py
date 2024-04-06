@@ -101,6 +101,7 @@ def calc(line, cell, local_ns):
     # HTML first will cause IPython to treat it as left-justified HTML. $ tags are needed to tell
     # HTML that this is Latex.
     display(HTML('$' + text + '$'))
+    print(text)
     
     # Alternatively, for center-justified tables bypassing HTML, use the next line instead.
     # display(Latex(text))
