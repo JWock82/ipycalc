@@ -101,7 +101,6 @@ def calc(line, cell, local_ns):
     # HTML first will cause IPython to treat it as left-justified HTML. $ tags are needed to tell
     # HTML that this is Latex.
     display(HTML('$' + text + '$'))
-    print(text)
     
     # Alternatively, for center-justified tables bypassing HTML, use the next line instead.
     # display(Latex(text))
@@ -220,10 +219,9 @@ def process_line(calc_line, local_ns):
     # description = description.replace('\\\\', '} \\\\ \\textsf{')
     # equation = equation.replace('\\\\', '')
     # reference = reference.replace('\\\\', '} \\\\ \\textsf{')
-
-    description = description.replace('\\\\', '\\textsf{ \\\\ }')
-    equation = equation.replace('\\\\', '\\textsf{ \\\\ }')
-    reference = reference.replace('\\\\', '\\textsf{ \\\\ }')
+    description = description.replace('\\\\', '} \\newline \\textsf{')
+    equation = equation.replace('\\\\', '')
+    reference = reference.replace('\\\\', '} \\newline \\textsf{')
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.default_format = '~'
@@ -340,7 +338,7 @@ def process_line(calc_line, local_ns):
     reference = reference.strip()
 
     # Return the line formatted in all its glory
-    latex_text =  '\\small{\\textsf{' + description + '}} & ' + '\\small{' + latex_variable + latex_equation + latex_value + '} & \\small{\\textsf{' + reference + '}} \\\\\n'
+    latex_text =  '\\small{\\textsf{' + description + '}} & ' + '\\small{' + latex_variable + latex_equation + latex_value + '} & \\small{\\textsf{' + reference + '}} \\\\ \n'
     
     # There will be a double equals sign if the equation is not being displayed
     latex_text = latex_text.replace('==', '=')
