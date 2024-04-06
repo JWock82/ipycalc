@@ -88,7 +88,7 @@ def calc(line, cell, local_ns):
             code_lines.pop(i)
     
     # Start the output text
-    text = '\\begin{array}{lpwidth{0.25\\linewidth} lpwidth{0.5\\linewidth} lpwidth{0.25\\linewidth}}\n'
+    text = '\\begin{array} {lpwidth{0.25\\linewidth} lpwidth{0.5\\linewidth} lpwidth{0.25\\linewidth}}\n'
 
     # Process each code line
     for ln in code_lines:
@@ -216,12 +216,9 @@ def process_line(calc_line, local_ns):
     equation = alt_sqrt(equation)
 
     # Handle manually inserted line breaks placed in the line by the user
-    # description = description.replace('\\\\', '} \\\\ \\textsf{')
-    # equation = equation.replace('\\\\', '')
-    # reference = reference.replace('\\\\', '} \\\\ \\textsf{')
-    description = description.replace('\\\\', '} \\newline \\textsf{')
+    description = description.replace('\\\\', '} \\\\ \\textsf{')
     equation = equation.replace('\\\\', '')
-    reference = reference.replace('\\\\', '} \\newline \\textsf{')
+    reference = reference.replace('\\\\', '} \\\\ \\textsf{')
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.default_format = '~'
