@@ -215,11 +215,10 @@ def process_line(calc_line, local_ns):
     # `Pint` prefers exponents to the 1/2 power instead of square roots
     equation = alt_sqrt(equation)
 
-    # The next few lines of code used to work, but don't seem to work anymore with the lates version of Jupyter Lab
     # Handle manually inserted line breaks placed in the line by the user
-    # description = description.replace('\\\\', '} \\\\  \\textsf{')
-    # equation = equation.replace('\\\\', '')
-    # reference = reference.replace('\\\\', '} \\\\  \\textsf{')
+    description = description.replace('\\\\', '} \\\\  \\textsf{')
+    equation = equation.replace('\\\\', '')
+    reference = reference.replace('\\\\', '} \\\\  \\textsf{')
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.default_format = '~'
