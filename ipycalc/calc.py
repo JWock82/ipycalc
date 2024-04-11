@@ -216,9 +216,9 @@ def process_line(calc_line, local_ns):
     equation = alt_sqrt(equation)
 
     # Handle manually inserted line breaks placed in the line by the user
-    description = description.replace('\\\\', '} \\\\  \\textsf{')
+    description = description.replace('\\\\', '}} \\\\ \\small{\\textsf{')
     equation = equation.replace('\\\\', '')
-    reference = reference.replace('\\\\', '} \\\\  \\textsf{')
+    reference = reference.replace('\\\\', '}} \\\\ \\small{\\textsf{')
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.default_format = '~'
@@ -335,7 +335,7 @@ def process_line(calc_line, local_ns):
     reference = reference.strip()
 
     # Return the line formatted in all its glory
-    latex_text =  '\\small{\\textsf{' + description + '}} & ' + '\\small{' + latex_variable + latex_equation + latex_value + '} & \\small{\\textsf{' + reference + '}} \\\\ \n'
+    latex_text = '\\small{\\textsf{' + description + '}} & ' + '\\small{' + latex_variable + latex_equation + latex_value + '} & \\small{\\textsf{' + reference + '}} \\\\ \n'
     
     # There will be a double equals sign if the equation is not being displayed
     latex_text = latex_text.replace('==', '=')
