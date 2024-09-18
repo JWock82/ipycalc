@@ -304,6 +304,7 @@ def process_line(calc_line, local_ns):
     variable = variable.replace(')', '')
     variable = variable.replace(',', '')  # Allowing commas in variable names would get messy
     variable = variable.replace(' ', '')
+    variable = variable.replace('lambda', 'lamb')  # lambda is a reserved word in python
 
     # Create a Latex version of the value
     latex_value = ''
@@ -396,8 +397,6 @@ def python_to_latex(text):
     
     # Take care of any lower case greek psi characters. This is necessary because 'psi' is also a unit
     text = text.replace('grpsi', '\\psi')
-
-    #
 
     # Convert common functions to latex
     text = text.replace('sin', '\\sin')
