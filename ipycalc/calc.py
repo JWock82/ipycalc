@@ -203,6 +203,7 @@ def process_line(calc_line, local_ns):
     # Format the equation to be Python friendly
     equation = equation.replace('^prime', '_prime')
     equation = equation.replace('^', '**')
+    equation = equation.replace('lambda', 'lamb')
 
     # Resolve prime symbols in the variable before we compare it to the equation, which has already
     # had them resolved
@@ -374,6 +375,9 @@ def python_to_latex(text):
     text = text.replace('<=', ' \\le ')
     text = text.replace('>=', ' \\ge ')
     text = text.replace('!=', ' \\neq ')
+
+    # Convert `lamb` back to `lambda` for latex
+    text = text.replace('lamb', 'lambda')
 
     # Process 'if' statements first, since they require spaces
     if '@if@' in text:
