@@ -10,7 +10,7 @@ import pint
 directory = os.path.dirname(__file__)
 ureg = pint.UnitRegistry(directory + '\\ipycalc_en.txt')  # Creates the units registry
 ureg.default_system = 'US'  # US Customary unit system
-ureg.default_format = '~P'  # Shorthand units w/ pretty formatting
+ureg.formatter.default_format = '~P'  # Shorthand units w/ pretty formatting
 ureg.define('plf = pound_force / foot')
 ureg.define('klf = kip / foot')
 ureg.define('psf = pound_force / foot**2')
