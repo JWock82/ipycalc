@@ -217,7 +217,7 @@ def process_line(calc_line, local_ns):
     # Handle manually inserted line breaks placed in the line by the user
     description = description.replace('\\\\', '}} \\\\ \\small{\\textsf{')
     equation = equation.replace('\\\\', '')
-    reference = reference.replace('\\\\', '}} \\newline \\small{\\textsf{')
+    reference = reference.replace('\\\\', '}} \\\\ \\small{\\textsf{')
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.formatter.default_format = '~'
