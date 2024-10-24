@@ -194,8 +194,7 @@ def process_line(calc_line, local_ns):
     else:
         equation, value_format = equation, ''
 
-    # Remove leading and trailing whitespace from all the components except the equation. The
-    # equation is a Python expression that may need the spaces.
+    # Remove leading and trailing whitespace from all the components except the equation. The equation is a Python expression that may need the spaces.
     description = description.strip()
     variable = variable.strip()
     value_format = value_format.strip()
@@ -205,8 +204,7 @@ def process_line(calc_line, local_ns):
     equation = equation.replace('^', '**')
     equation = equation.replace('lambda', 'lamb')
 
-    # Resolve prime symbols in the variable before we compare it to the equation, which has already
-    # had them resolved
+    # Resolve prime symbols in the variable before we compare it to the equation, which has already had them resolved
     variable = variable.replace('^prime', '_prime')
 
     # Make a latex copy of the equation and variable before we switch out square root symbols
@@ -219,10 +217,10 @@ def process_line(calc_line, local_ns):
     # Handle manually inserted line breaks placed in the line by the user
     description = description.replace('\\\\', '}} \\\\ \\small{\\textsf{')
     equation = equation.replace('\\\\', '')
-    reference = reference.replace('\\\\', '}} \\\\ \\small{\\textsf{')
+    reference = reference.replace('\\\\', '}} \\par \\small{\\textsf{')
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
-    ureg.default_format = '~'
+    ureg.formatter.default_format = '~'
 
     # Determine the requested unit format
     if '*' in value_format:
