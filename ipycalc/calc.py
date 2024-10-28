@@ -218,7 +218,6 @@ def process_line(calc_line, local_ns):
     description = description.replace('\\\\', '}} \\\\ \\small{\\textsf{')
     equation = equation.replace('\\\\', '')
     reference = reference.replace('\\\\', '}} \\\\ \\small{\\textsf{')
-    reference = '\\displaylines{' + reference + '}'
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.formatter.default_format = '~'
@@ -293,7 +292,7 @@ def process_line(calc_line, local_ns):
         value = value[0:-1]
     
     # Turn pretty printing back on
-    ureg.default_format = '~P'
+    ureg.formatter.default_format = '~P'
     
     # Format the description
     if description != '':
@@ -333,6 +332,7 @@ def process_line(calc_line, local_ns):
     latex_variable = latex_variable + '='
 
     # Format the reference
+    reference = '\\displaylines{' + reference + '}'
     reference = reference.strip()
 
     # Return the line formatted in all its glory
