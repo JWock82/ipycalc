@@ -218,6 +218,7 @@ def process_line(calc_line, local_ns):
     description = description.replace('\\\\', '}} \\\\ \\small{\\textsf{')
     equation = equation.replace('\\\\', '')
     reference = reference.replace('\\\\', '}} \\\\ \\small{\\textsf{')
+    reference = '\\displaylines{' + reference + '}'
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.formatter.default_format = '~'
