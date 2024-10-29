@@ -167,8 +167,7 @@ def sync_namespaces(local_ns):
 #%%
 def process_line(calc_line, local_ns):
 
-    # Ampersand symbols will mess with latex table formatting unless they have a `\` in front of
-    # them
+    # Ampersand symbols will mess with latex table formatting unless they have a `\` in front of them
     calc_line = calc_line.replace('&', '\&')
 
     # Break up the line into components: `description`, `variable`, `equation`, `value` and `reference`
@@ -335,7 +334,7 @@ def process_line(calc_line, local_ns):
     reference = reference.strip()
 
     # Return the line formatted in all its glory
-    latex_text = '\\small{\\textsf{' + description + '}} & \\small{' + latex_variable + latex_equation + latex_value + '} & \\begin{array}{@{}l@{}}{\\small{\\textsf{' + reference + '}} \\\\ \n'
+    latex_text = '\\small{\\textsf{' + description + '}} & \\small{' + latex_variable + latex_equation + latex_value + '} & \\begin{array}{@{}l@{}} {\\small{\\textsf{' + reference + '}} \\end{array} \\\\ \n'
     
     # There will be a double equals sign if the equation is not being displayed
     latex_text = latex_text.replace('==', '=')
