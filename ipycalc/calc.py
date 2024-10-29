@@ -217,7 +217,7 @@ def process_line(calc_line, local_ns):
     # Handle manually inserted line breaks placed in the line by the user
     description = description.replace('\\\\', '}} \\\\ \\small{\\textsf{')
     equation = equation.replace('\\\\', '')
-    reference = reference.replace('\\\\', '}} \\\\ \\small{\\textsf{')
+    reference = reference.replace('\\\\', '}}} \\\\ {\\small{\\textsf{')
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.formatter.default_format = '~'
@@ -335,7 +335,7 @@ def process_line(calc_line, local_ns):
     reference = reference.strip()
 
     # Return the line formatted in all its glory
-    latex_text = '\\small{\\textsf{' + description + '}} & \\small{' + latex_variable + latex_equation + latex_value + '} & \\begin{array}{@{}l@{}}\\small{\\textsf{' + reference + '}} \\\\ \n'
+    latex_text = '\\small{\\textsf{' + description + '}} & \\small{' + latex_variable + latex_equation + latex_value + '} & \\begin{array}{@{}l@{}}{\\small{\\textsf{' + reference + '}} \\\\ \n'
     
     # There will be a double equals sign if the equation is not being displayed
     latex_text = latex_text.replace('==', '=')
@@ -439,14 +439,6 @@ def python_to_latex(text):
 
     # Return the Latex text
     return text
-
-def format_cell(latex):
-    """
-    Formats latex to be put in a latex array's cell
-    """
-
-    # Left justify the text and split the lines wherever \\\\ is found
-    return '\\begin{array}{@{}l@{}}' + latex + '\\end{array}'
 
 def process_if(text, level, type):
     
