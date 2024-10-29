@@ -168,7 +168,7 @@ def sync_namespaces(local_ns):
 def process_line(calc_line, local_ns):
 
     # Ampersand symbols will mess with latex table formatting unless they have a `\` in front of them
-    calc_line = calc_line.replace('&', r'&')
+    calc_line = calc_line.replace('&', '\&')
 
     # Break up the line into components: `description`, `variable`, `equation`, `value` and `reference`
     if '#' in calc_line:
