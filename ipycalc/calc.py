@@ -335,7 +335,7 @@ def process_line(calc_line, local_ns):
     reference = reference.strip()
 
     # Return the line formatted in all its glory
-    latex_text = '\\small{\\textsf{' + description + '}} & ' + '\\small{' + latex_variable + latex_equation + latex_value + '} & \\makecell[l]\\displaylines{\\small{\\textsf{' + reference + '}}} \\\\ \n'
+    latex_text = '\\small{\\textsf{' + description + '}} & ' + '\\small{' + latex_variable + latex_equation + latex_value + '} & \\displaylines{\\small{\\textsf{' + reference + '}}} \\\\ \n'
     
     # There will be a double equals sign if the equation is not being displayed
     latex_text = latex_text.replace('==', '=')
