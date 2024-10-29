@@ -11,6 +11,10 @@ The basic calculation syntax is:
 
 Variable Description: `variable_name` = `python_expression` -> `result_decimal_places`*`result_unit` # Reference Text
 
+Here's a simple example that calculates the flexural strength of a concrete beam:
+
+![Example](/Example.png)
+
 Key components of the `ipycalc` syntax are:
 
 * `:` (required) The description must come before this character.
