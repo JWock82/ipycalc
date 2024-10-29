@@ -446,7 +446,7 @@ def format_cell(latex):
     """
 
     # Left justify the text and split the lines wherever \\\\ is found
-    return '\\begin{array}{@{}l@{}}\displaylines{' + latex + '}\\end{array}'
+    return '\\begin{array}{@{}l@{}}\\displaylines{' + latex + '}\\end{array}'
 
 def process_if(text, level, type):
     
