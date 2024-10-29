@@ -214,9 +214,9 @@ def process_line(calc_line, local_ns):
     equation = alt_sqrt(equation)
 
     # Handle manually inserted line breaks placed in the line by the user
-    description = description.replace('\\\\', '}} \\\\ \\small{\\textsf{')
-    equation = equation.replace('\\\\', '')
-    reference = reference.replace('\\\\', '}}} \\\\ {\\small{\\textsf{')
+    # description = description.replace('\\\\', '}} \\\\ \\small{\\textsf{')
+    # equation = equation.replace('\\\\', '')
+    # reference = reference.replace('\\\\', '}}} \\\\ {\\small{\\textsf{')
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.formatter.default_format = '~'
@@ -334,8 +334,9 @@ def process_line(calc_line, local_ns):
     reference = reference.strip()
 
     # Return the line formatted in all its glory
-    latex_text = '\\small{\\textsf{' + description + '}} & \\small{' + latex_variable + latex_equation + latex_value + '} & \\begin{array}{@{}l@{}} {\\small{\\textsf{' + reference + '}}} \\end{array} \\\\ \n'
-    
+    # latex_text = '\\small{\\textsf{' + description + '}} & \\small{' + latex_variable + latex_equation + latex_value + '} & \\begin{array}{@{}l@{}} {\\small{\\textsf{' + reference + '}}} \\end{array} \\\\ \n'
+    latex_text = linebreaks(description, 'text') + '&' + linebreaks(latex_variable + latex_equation + latex_value, 'math') + '&' + linebreaks(reference, 'text') + ' \\\\ \n'
+
     # There will be a double equals sign if the equation is not being displayed
     latex_text = latex_text.replace('==', '=')
     
@@ -661,16 +662,13 @@ def funit(value, precision=None):
     # If no non-numeric characters were found we're dealing with a unitless value
     return latex_value
 
-#%%
-# @register_line_magic
-# @needs_local_scope
-# def print_calc(line, local_ns):
-
-#     line = line.strip()
-
-#     if line == '':
-#         dir = local_ns['_dh'][0] + '\\ipycalc_Notebook.pdf'
-#     else:
-#         dir = line
-
-#     exec('!jupyter nbconvert \'' + dir + '\' --to=ipycalc')
+def linebreaks(text, format='text'):
+    
+    # Handle manually inserted line breaks placed in the line by the user
+    if format == 'text':
+        text = text.replace('\\\\', '}}} \\\\ {\\small{\\textsf{')
+        return '\\begin{array}{@{}l@{}} {\\small{\\textsf{' + text + '}}} \\end{array}'
+    # Format math equations differently
+    else:
+        text = text.replace('\\\\', '}} \\\\ {\\small{')
+        return '\\begin{array}{@{}l@{}} {\\small{' + text + '}} \\end{array}'
