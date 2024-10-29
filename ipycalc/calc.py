@@ -334,7 +334,6 @@ def process_line(calc_line, local_ns):
     reference = reference.strip()
 
     # Return the line formatted in all its glory
-    # latex_text = '\\small{\\textsf{' + description + '}} & \\small{' + latex_variable + latex_equation + latex_value + '} & \\begin{array}{@{}l@{}} {\\small{\\textsf{' + reference + '}}} \\end{array} \\\\ \n'
     latex_text = linebreaks(description, 'text') + '&' + linebreaks(latex_variable + latex_equation + latex_value, 'math') + '&' + linebreaks(reference, 'text') + ' \\\\ \n'
 
     # There will be a double equals sign if the equation is not being displayed
@@ -664,10 +663,15 @@ def funit(value, precision=None):
 
 def linebreaks(text, format='text'):
     
-    # Handle manually inserted line breaks placed in the line by the user
+    # Normally in Latex a simple \\ will create a linebreak. However, MathJax in Jupyter applies the line break across the entire row of a table array, rather than just across the individual cell. To work around this, we'll use another table array within the table cell to contain the linebreak to just the cell.
+
+    # Note that \\ becomes \\\\ when formatted as a string in Python since \ is considered an escape character in Python.
+
+    # Format text with linebreaks
     if format == 'text':
         text = text.replace('\\\\', '}}} \\\\ {\\small{\\textsf{')
         return '\\begin{array}{@{}l@{}} {\\small{\\textsf{' + text + '}}} \\end{array}'
+    
     # Format math equations differently
     else:
         text = text.replace('\\\\', '}} \\\\ {\\small{')
