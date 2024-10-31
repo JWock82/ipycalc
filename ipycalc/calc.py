@@ -3,7 +3,7 @@ import os
 from math import pi, sqrt, sin, cos, asin, acos, atan, tan, sinh, cosh, tanh
 
 from IPython.core.magic import (register_cell_magic, needs_local_scope)
-from IPython.display import display, Latex, HTML
+from IPython.display import display, Latex, HTML, Markdown
 
 # Use pint for units
 import pint
@@ -87,23 +87,19 @@ def calc(line, cell, local_ns):
         if ln == '' or ln == '\n':
             code_lines.pop(i)
     
-    # Start the output text
+    # Arrays will be used to format the output in a tabular way for display in Jupyter
+    # Start a parent array that will hold all the output.
     text = '\\begin{array} {lpwidth{0.25\\linewidth} lpwidth{0.5\\linewidth} lpwidth{0.25\\linewidth}}\n'
 
     # Process each code line
     for ln in code_lines:
         text += process_line(ln, local_ns)
 
-    # Display the cell's results
+    # Close of the parent array that contains all the lines
     text += '\\end{array}'
-
-    # IPython will try to center the output in the output cell since it's a table. Rendering to
-    # HTML first will cause IPython to treat it as left-justified HTML. $ tags are needed to tell
-    # HTML that this is Latex.
-    display(HTML('$' + text + '$'))
     
-    # Alternatively, for center-justified tables bypassing HTML, use the next line instead.
-    # display(Latex(text))
+    # Display the cell's results
+    display(Markdown('$' + text + '$'))
 
 #%%
 def sync_namespaces(local_ns):
@@ -213,10 +209,8 @@ def process_line(calc_line, local_ns):
     # `Pint` prefers exponents to the 1/2 power instead of square roots
     equation = alt_sqrt(equation)
 
-    # Handle manually inserted line breaks placed in the line by the user
-    # description = description.replace('\\\\', '}} \\\\ \\small{\\textsf{')
-    # equation = equation.replace('\\\\', '')
-    # reference = reference.replace('\\\\', '}}} \\\\ {\\small{\\textsf{')
+    # Remove manually inserted line breaks from the equation
+    equation = equation.replace('\\\\', '')
     
     # Turn off pretty printing momentarily while we prepare a Python expression for the value
     ureg.formatter.default_format = '~'
@@ -280,9 +274,9 @@ def process_line(calc_line, local_ns):
             value = str(eval(equation))
     
     # 'in' is a keyword in Python. Remove it from the expression we just created and replace it with 'inch'
-    value = value.replace('inch', '@@@@')  # Used to prevent 'inchch' after the next line runs
+    value = value.replace('inch', '~~~~')  # Used to prevent 'inchch' after the next line runs
     value = value.replace('in', 'inch')
-    value = value.replace('@@@@', 'inch')
+    value = value.replace('~~~~', 'inch')
     value = value.strip()
     
     # In the case of dimensionless units due to units canceling out, there will be an extra '*' at
@@ -334,7 +328,7 @@ def process_line(calc_line, local_ns):
     reference = reference.strip()
 
     # Return the line formatted in all its glory
-    latex_text = linebreaks(description, 'text') + '&' + linebreaks(latex_variable + latex_equation + latex_value, 'math') + '&' + linebreaks(reference, 'text') + ' \\\\ \n'
+    latex_text = linebreaks(description, 'text') + '&' + linebreaks(latex_variable + latex_equation + latex_value, 'math') + '&' + linebreaks(reference, 'text') + '\\\\ \n'
 
     # There will be a double equals sign if the equation is not being displayed
     latex_text = latex_text.replace('==', '=')
@@ -354,9 +348,9 @@ def python_to_latex(text):
     :rtype: str
     """
     
-    # Change spaces we want to keep to the '@' symbol temporarily
-    text = text.replace(' if ', '@if@')
-    text = text.replace(' else ', '@else@')
+    # Change spaces we want to keep to the '~' symbol temporarily
+    text = text.replace(' if ', '~if~')
+    text = text.replace(' else ', '~else~')
 
     # Add any prime symbols back in
     text = text.replace('_prime', '^{\\prime}')
@@ -377,7 +371,7 @@ def python_to_latex(text):
     text = text.replace('lamb', 'lambda')
 
     # Process 'if' statements first, since they require spaces
-    if '@if@' in text:
+    if '~if~' in text:
         text = process_if(text, level=1, type='if')
 
     # Remove spaces from the raw text
@@ -428,8 +422,8 @@ def python_to_latex(text):
     text = text.replace('(', '\\left(')
     text = text.replace(')', '\\right)')
 
-    # Convert '@' symbols back to spaces
-    text = text.replace('@', ' ')
+    # Convert '~' symbols back to spaces
+    text = text.replace('~', ' ')
 
     # Remove the multiplicate dot in front of any units
     text = text.replace('\\cdot{}inch', ' \\ in')
@@ -441,8 +435,7 @@ def python_to_latex(text):
 
 def process_if(text, level, type):
     
-    # Note: 'if' statements nested in the first return value are not supported yet. 'If' statements
-    # nested after the first 'else' are supported.
+    # Note: 'if' statements nested in the first return value are not supported yet. 'If' statements nested after the first 'else' are supported.
 
     # Split the line into 'if' and 'else' portions
     if 'else' in text:
@@ -456,15 +449,15 @@ def process_if(text, level, type):
     # Check if the 'if' is an really an 'if' or if it's an 'elif'
     if type == 'if':
         # Add an 'if' line
-        latex_text = value + '\\textsf{@if@}' + condition + '\\\\'
+        latex_text = value + '\\textsf{~if~}' + condition + '\\\\'
     elif type == 'elif':
         # Add an 'else if' line
-        latex_text = '\\hspace{1cm}'  + '\\textsf{else@}' + value + '\\textsf{@if@}' + condition + '\\\\'
+        latex_text = '\\hspace{1cm}'  + '\\textsf{else~}' + value + '\\textsf{~if~}' + condition + '\\\\'
 
     # Check for an 'else' condition without an 'if' in it
-    if '@if@' not in else_text:
+    if '~if~' not in else_text:
         # Add the 'else' text
-        latex_text += '\\hspace{1cm}' + '\\textsf{else@}' + else_text + '\\\\'
+        latex_text += '\\hspace{1cm}' + '\\textsf{else~}' + else_text + '\\\\'
     
     # Evaluate 'if' statements nested in the 'else' statement
     elif else_text != '':
@@ -526,7 +519,7 @@ def sscript_curly(symbol, text):
 
             # Add all the characters associated with this symbol
             j = i + 1
-            while j < len(text) and text[j] not in ['+', '-', '*', '/', '=', '>', '<', '!', ',', '@']:
+            while j < len(text) and text[j] not in ['+', '-', '*', '/', '=', '>', '<', '!', ',', '~']:
 
                 # Check for parentheses nested within the superscript or subscript
                 if text[j] == '(':
