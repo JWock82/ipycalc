@@ -167,16 +167,19 @@ def process_line(calc_line, local_ns):
     calc_line = calc_line.replace('&', r'&')
 
     # Break up the line into components: `description`, `variable`, `equation`, `value` and `reference`
+    # Split `reference` off from the rest of the line
     if '#' in calc_line:
         description, reference = calc_line.split('#', 1)
     else:
         description, reference = calc_line, ''
     
+    # Split `description` off from the rest of the line
     if ':' in calc_line:
         description, variable = description.split(':', 1)
     else:
         description, variable = '', description
     
+    # Split off `variable` from the rest of the line
     if '=' in variable:
         variable, equation = variable.split('=', 1)
     else:
@@ -446,18 +449,18 @@ def process_if(text, level, type):
     # Split the 'if' portion into the condition and value
     value, condition = if_text.split('if', 1)
 
-    # Check if the 'if' is an really an 'if' or if it's an 'elif'
+    # Check if the `if` is an really an `if` or if it's an `elif`
     if type == 'if':
-        # Add an 'if' line
+        # Add an `if` line
         latex_text = value + '\\textsf{~if~}' + condition + '\\\\'
     elif type == 'elif':
-        # Add an 'else if' line
-        latex_text = '\\hspace{1cm}'  + '\\textsf{else~}' + value + '\\textsf{~if~}' + condition + '\\\\'
+        # Add an `else if` line
+        latex_text = '\\hspace{2em}'  + '\\textsf{else~}' + value + '\\textsf{~if~}' + condition + '\\\\'
 
     # Check for an 'else' condition without an 'if' in it
     if '~if~' not in else_text:
         # Add the 'else' text
-        latex_text += '\\hspace{1cm}' + '\\textsf{else~}' + else_text + '\\\\'
+        latex_text += '\\hspace{2em}' + '\\textsf{else~}' + else_text + '\\\\'
     
     # Evaluate 'if' statements nested in the 'else' statement
     elif else_text != '':
@@ -472,8 +475,9 @@ def process_if(text, level, type):
         # Use recursion to evaluate the nested 'if' statement
         latex_text += process_if(else_text, level=2, type='elif')
     
+    # Check if this is the first level of `if` statements. If so, we are at the end of the `if` block and we need to add another space `value` to be indented
     if level == 1:
-        latex_text += '\\hspace{0.5cm}'
+        latex_text += '\\hspace{2em}'
 
     return latex_text
 
@@ -665,7 +669,7 @@ def linebreaks(text, format='text'):
         text = text.replace('\\\\', '}}} \\\\ {\\small{\\textsf{')
         return '\\begin{array}{@{}l@{}} {\\small{\\textsf{' + text + '}}} \\end{array}'
     
-    # Format math equations differently
+    # Format math equations with linebreaks differently than text
     else:
         text = text.replace('\\\\', '}} \\\\ {\\small{')
         return '\\begin{array}{@{}l@{}} {\\small{' + text + '}} \\end{array}'
