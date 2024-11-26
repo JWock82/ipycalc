@@ -397,21 +397,23 @@ def python_to_latex(text):
     text = text.replace('grpsi', '\\psi')
 
     # Convert common functions to latex
-    text = text.replace('sin', '\\sin')
-    text = text.replace('cos', '\\cos')
-    text = text.replace('tan', '\\tan')
-    text = text.replace('a\\sin', '\\arcsin')
-    text = text.replace('a\\cos', '\\arccos')
-    text = text.replace('a\\tan', '\\arctan')
-    text = text.replace('arc\\sin', '\\arcsin')
-    text = text.replace('arc\\cos', '\\arccos')
-    text = text.replace('arc\\tan', '\\arctan')
-    text = text.replace('min', '\\min')
-    text = text.replace('max', '\\max')
+    text = text.replace('sin(', '\\sin(')
+    text = text.replace('cos(', '\\cos(')
+    text = text.replace('tan(', '\\tan(')
+    text = text.replace('a\\sin(', '\\arcsin(')
+    text = text.replace('a\\cos(', '\\arccos(')
+    text = text.replace('a\\tan(', '\\arctan(')
+    text = text.replace('arc\\sin(', '\\arcsin(')
+    text = text.replace('arc\\cos(', '\\arccos(')
+    text = text.replace('arc\\tan(', '\\arctan(')
+    text = text.replace('min(', '\\min(')
+    text = text.replace('max(', '\\max(')
+    text = text.replace('log(', 'ln(')
+    text = text.replace('log10(', 'log10(')
 
     # Adjust a few more special characters to be Latex friendly
     text = text.replace('*', ' \\cdot{}')
-    text = text.replace('sqrt', '\\sqrt')
+    text = text.replace('sqrt(', '\\sqrt(')
 
     # Change any parentheses to brackets for `sqrt`, `^`, and `_`
     text = curly_brackets('sqrt', text)
