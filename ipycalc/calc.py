@@ -410,10 +410,11 @@ def python_to_latex(text):
     text = text.replace('max(', '\\max(')
     text = text.replace('log(', 'ln(')
     text = text.replace('log10(', 'log10(')
-
-    # Adjust a few more special characters to be Latex friendly
-    text = text.replace('*', ' \\cdot{}')
     text = text.replace('sqrt(', '\\sqrt(')
+
+    # Legacy code:
+    # Adjust a few more special characters to be Latex friendly
+    # text = text.replace('*', ' \\cdot{}')
 
     # Change any parentheses to brackets for `sqrt`, `^`, and `_`
     text = curly_brackets('sqrt', text)
@@ -434,6 +435,9 @@ def python_to_latex(text):
     text = text.replace('\\cdot{}inch', ' \\ in')
     for unit in unit_list:
         text = text.replace('\\cdot{}' + unit, ' \\ ' + unit)
+
+    # Remove multiplication symbols
+    text = text.replace('*', '')
 
     # Return the Latex text
     return text
