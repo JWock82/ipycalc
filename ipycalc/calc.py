@@ -673,5 +673,5 @@ def linebreaks(text, format='text'):
     
     # Format math equations with linebreaks differently than text
     else:
-        text = text.replace('\\\\', '}} \\\\ {\\small{')
+        text = text.replace('\\\\', '}} \\\\ \\hspace{2em} {\\small{')
         return '\\begin{array}{@{}l@{}} {\\small{' + text + '}} \\end{array}'
