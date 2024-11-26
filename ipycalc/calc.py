@@ -431,10 +431,10 @@ def python_to_latex(text):
     # Convert '~' symbols back to spaces
     text = text.replace('~', ' ')
 
-    # Remove the multiplicate dot in front of any units
-    text = text.replace('\\cdot{}inch', ' \\ in')
+    # Provide a space before any units
+    text = text.replace('*inch', ' \\ in')
     for unit in unit_list:
-        text = text.replace('\\cdot{}' + unit, ' \\ ' + unit)
+        text = text.replace('*' + unit, ' \\ ' + unit)
 
     # Remove multiplication symbols
     text = text.replace('*', '')
@@ -529,7 +529,7 @@ def sscript_curly(symbol, text):
 
             # Add all the characters associated with this symbol
             j = i + 1
-            while j < len(text) and text[j] not in ['+', '-', '*', '/', '=', '>', '<', '!', ',', '~']:
+            while j < len(text) and text[j] not in ['+', '-', '*', '/', '=', '>', '<', '!', ',', '~', '^']:
 
                 # Check for parentheses nested within the superscript or subscript
                 if text[j] == '(':
