@@ -28,7 +28,7 @@ Here are a few useful things to keep in mind when using `ipycalc`:
 * Subscripts can be added by using the `_` character to indicate the start of a subscript.
 * Greek characters included in the `python_expression` can just be written out (e.g. `epsilon`). To include greek characters in the Variable Description or the Reference Text, you can use Jupyter's Markdown Latex tags (e.g. `$\epsilon$`).
 * To stack fractions place the numerator and denominater in parentheses: (num)/(denom) yields $\dfrac{num}{denom}$.
-* `If` statements and `else` statements are available using python's inline `if` statement notation.
+* `if` statements and `else` statements are available using python's inline `if` statement (terniary) notation.
 * Square roots can be displayed using `sqrt`.
 * Prime characters can be displayed using `^prime`.
 * If text gets to lengthy to fit on one line, you can add `\\` to force a line break anywhere in a line. This can help your calculations fit within the page's print margins.
