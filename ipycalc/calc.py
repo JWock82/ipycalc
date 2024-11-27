@@ -375,7 +375,7 @@ def python_to_latex(text):
 
     # Process 'if' statements first, since they require spaces
     if '~if~' in text:
-        text = process_if(text, level=1, type='if')
+        text = process_if(text, type='if')
 
     # Remove spaces from the raw text
     text = text.replace(' ', '')
@@ -442,49 +442,42 @@ def python_to_latex(text):
     # Return the Latex text
     return text
 
-def process_if(text, level, type):
+def process_if(text, type):
     
-    # Note: 'if' statements nested in the first return value are not supported yet. 'If' statements nested after the first 'else' are supported.
+    # Note: `if` statements nested in the first return value are not supported. `if` statements nested after the first 'else' are supported.
 
-    # Split the line into 'if' and 'else' portions
+    # Split the line into `if` and `else` portions
     if 'else' in text:
         if_text, else_text = text.split('else', 1)
     else:
         if_text, else_text = text, ''
     
-    # Split the 'if' portion into the condition and value
-    value, condition = if_text.split('if', 1)
-
-    # Check if the `if` is an really an `if` or if it's an `elif`
+    # Check what type of statement this is: `if`, `elif`, or `else`
     if type == 'if':
         # Add an `if` line
-        latex_text = value + '\\textsf{~if~}' + condition + '\\\\'
+        value, condition = if_text.split('if', 1)
+        latex_text = value + '\\hspace{0.5em}\\textsf{~if~}' + condition + '\\\\'
     elif type == 'elif':
-        # Add an `else if` line
-        latex_text = '\\hspace{2em}'  + '\\textsf{else~}' + value + '\\textsf{~if~}' + condition + '\\\\'
+        # Add an `elsif` line
+        value, condition = if_text.split('if', 1)
+        latex_text = '\\textsf{else~}' + value + '\\hspace{0.5em}\\textsf{~if~}' + condition + '\\\\'
+    elif type == 'else':
+        value = if_text
+        # Add the `else` line
+        latex_text = '\\textsf{else~}' + value + '\\\\'
 
-    # Check for an 'else' condition without an 'if' in it
-    if '~if~' not in else_text:
-        # Add the 'else' text
-        latex_text += '\\hspace{2em}' + '\\textsf{else~}' + else_text + '\\\\'
-    
-    # Evaluate 'if' statements nested in the 'else' statement
-    elif else_text != '':
+    # Repeat the process for any further conditionals found in the `else` portion of the statement
+    if else_text != '':
 
         # Remove any whitespace at the ends of the else text
         else_text = else_text.strip()
 
-        # Remove parentheses at the ends of the else text
-        if else_text[0] == '(': else_text = else_text[1:]
-        if else_text[-1] == ')': else_text = else_text[0:-1]
-
-        # Use recursion to evaluate the nested 'if' statement
-        latex_text += process_if(else_text, level=2, type='elif')
+        # Use recursion to evaluate the remaining conditional statements
+        if '~if~' in else_text:
+            latex_text += process_if(else_text, type='elif')
+        else:
+            latex_text += process_if(else_text, type='else')
     
-    # Check if this is the first level of `if` statements. If so, we are at the end of the `if` block and we need to add another space `value` to be indented
-    if level == 1:
-        latex_text += '\\hspace{2em}'
-
     return latex_text
 
 #%%
@@ -675,7 +668,7 @@ def linebreaks(text, format='text'):
         text = text.replace('\\\\', '}}} \\\\ {\\small{\\textsf{')
         return '\\begin{array}{@{}l@{}} {\\small{\\textsf{' + text + '}}} \\end{array}'
     
-    # Format math equations with linebreaks differently than text
+    # Math equations having linebreaks should have an indentation at the new line for clarity reading the equation
     else:
         text = text.replace('\\\\', '}} \\\\ \\hspace{2em} {\\small{')
         return '\\begin{array}{@{}l@{}} {\\small{' + text + '}} \\end{array}'
