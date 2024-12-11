@@ -49,6 +49,7 @@ deg = ureg.degree
 rad = ureg.radian
 sec = ureg.second
 hr = ureg.hour
+gal = ureg.gallon
 
 # Add some useful metric units
 g = ureg.gram
@@ -69,7 +70,7 @@ GPa = ureg.gigapascal
 
 unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 
              'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph',
-             'sec', 'hr', 'deg', 'rad', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'Pa', 'kPa', 'MPa', 'GPa']
+             'deg', 'rad', 'sec', 'hr', 'gal', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'Pa', 'kPa', 'MPa', 'GPa']
 
 #%%
 @register_cell_magic
@@ -140,6 +141,7 @@ def sync_namespaces(local_ns):
     local_ns['hr'] = ureg.hour
     local_ns['deg'] = ureg.degree
     local_ns['rad'] = ureg.radian
+    local_ns['gal'] = ureg.gallon
     
     # Add some useful metric units
     local_ns['mm'] = ureg.millimeter
