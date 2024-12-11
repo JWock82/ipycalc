@@ -438,7 +438,11 @@ def python_to_latex(text):
     for unit in unit_list:
         text = text.replace('*' + unit, ' \\ ' + unit)
 
-    # Remove multiplication symbols
+    # Replace multiplication symbols in front of numbers with a multiplication dot
+    for i in range(10):
+        text = text.replace('*' + str(i), '\\cdot{}' + str(i))
+    
+    # Remove all other multiplication symbols
     text = text.replace('*', '')
 
     # Return the Latex text
