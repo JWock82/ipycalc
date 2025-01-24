@@ -415,8 +415,8 @@ def python_to_latex(text):
     text = text.replace('sqrt(', '\\sqrt(')
 
     # Convert logical operators to latex
-    text = text.replace(' and ', '\:and\:')
-    text = text.replace(' or ', '\:or\:')
+    text = text.replace(' and ', '\\:and\\:')
+    text = text.replace(' or ', '\\:or\\:')
 
     # Legacy code:
     # Adjust a few more special characters to be Latex friendly
