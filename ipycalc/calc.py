@@ -367,11 +367,6 @@ def python_to_latex(text):
     text = sscript_curly('^', text)
     text = sscript_curly('_', text)
 
-    # Adjust inequality symbols
-    text = text.replace('<=', ' \\le\\')
-    text = text.replace('>=', ' \\ge\\')
-    text = text.replace('!=', ' \\neq\\')
-
     # Convert `lamb` back to `lambda` for latex
     text = text.replace('lamb', 'lambda')
 
@@ -381,6 +376,11 @@ def python_to_latex(text):
 
     # Remove spaces from the raw text
     text = text.replace(' ', '')
+    
+    # Adjust inequality symbols
+    text = text.replace('<=', ' \\le ')
+    text = text.replace('>=', ' \\ge ')
+    text = text.replace('!=', ' \\neq ')
 
     # Define a list of greek symbols
     greek = (['alpha', 'eta', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'omega', 'Alpha', 'Eta', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Theta', 'Iota', 'Kappa', 'Lambda', 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega'])
