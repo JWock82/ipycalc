@@ -368,9 +368,9 @@ def python_to_latex(text):
     text = sscript_curly('_', text)
 
     # Adjust inequality symbols
-    text = text.replace('<=', ' \\le ')
-    text = text.replace('>=', ' \\ge ')
-    text = text.replace('!=', ' \\neq ')
+    text = text.replace('<=', ' \\le\\')
+    text = text.replace('>=', ' \\ge\\')
+    text = text.replace('!=', ' \\neq\\')
 
     # Convert `lamb` back to `lambda` for latex
     text = text.replace('lamb', 'lambda')
