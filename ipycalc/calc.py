@@ -374,15 +374,20 @@ def python_to_latex(text):
     if '~if~' in text:
         text = process_if(text, type='if')
 
+    
+    # Convert logical operators to latex
+    text = text.replace(' and ', '\\~and\\~')
+    text = text.replace(' or ', '\\~or\\~')
+
     # Remove spaces from the raw text. This command must precede cases
     # where spaces are to remain such as inequalities and logical
     # operators.
     text = text.replace(' ', '')
     
     # Adjust inequality symbols
-    text = text.replace('<=', ' \\le ')
-    text = text.replace('>=', ' \\ge ')
-    text = text.replace('!=', ' \\neq ')
+    text = text.replace('<=', '~\\le~')
+    text = text.replace('>=', '~\\ge~')
+    text = text.replace('!=', '~\\neq~')
 
     # Define a list of greek symbols
     greek = (['alpha', 'eta', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'omega', 'Alpha', 'Eta', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Theta', 'Iota', 'Kappa', 'Lambda', 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega'])
@@ -415,10 +420,6 @@ def python_to_latex(text):
     text = text.replace('log(', 'ln(')
     text = text.replace('log10(', 'log10(')
     text = text.replace('sqrt(', '\\sqrt(')
-
-    # Convert logical operators to latex
-    text = text.replace(' and ', ' andy ')
-    text = text.replace(' or ', '\\ or\\ ')
 
     # Legacy code:
     # Adjust a few more special characters to be Latex friendly
