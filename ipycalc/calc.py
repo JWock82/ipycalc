@@ -374,7 +374,9 @@ def python_to_latex(text):
     if '~if~' in text:
         text = process_if(text, type='if')
 
-    
+    # Keep intentional spaces after commas
+    text = text.replace(', ', ',\\~')
+
     # Convert logical operators to latex
     text = text.replace(' and ', '\\~and\\~')
     text = text.replace(' or ', '\\~or\\~')
