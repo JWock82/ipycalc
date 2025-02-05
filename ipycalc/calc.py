@@ -374,7 +374,9 @@ def python_to_latex(text):
     if '~if~' in text:
         text = process_if(text, type='if')
 
-    # Remove spaces from the raw text
+    # Remove spaces from the raw text. This command must precede cases
+    # where spaces are to remain such as inequalities and logical
+    # operators.
     text = text.replace(' ', '')
     
     # Adjust inequality symbols
@@ -415,8 +417,8 @@ def python_to_latex(text):
     text = text.replace('sqrt(', '\\sqrt(')
 
     # Convert logical operators to latex
-    text = text.replace(' and ', '\\:and\\:')
-    text = text.replace(' or ', '\\:or\\:')
+    text = text.replace(' and ', ' andy ')
+    text = text.replace(' or ', '\\ or\\ ')
 
     # Legacy code:
     # Adjust a few more special characters to be Latex friendly
