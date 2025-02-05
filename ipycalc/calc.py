@@ -379,9 +379,7 @@ def python_to_latex(text):
     text = text.replace(' and ', '\\~and\\~')
     text = text.replace(' or ', '\\~or\\~')
 
-    # Remove spaces from the raw text. This command must precede cases
-    # where spaces are to remain such as inequalities and logical
-    # operators.
+    # Remove spaces from the raw text
     text = text.replace(' ', '')
     
     # Adjust inequality symbols
