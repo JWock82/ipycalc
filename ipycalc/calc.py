@@ -45,6 +45,7 @@ kipft = ureg.kip*ureg.foot
 kin = ureg.kip*ureg.inch
 kft = ureg.kip*ureg.foot
 mph = ureg.mile/ureg.hour
+rpm = ureg.rpm
 deg = ureg.degree
 rad = ureg.radian
 sec = ureg.second
@@ -70,7 +71,8 @@ GPa = ureg.gigapascal
 
 unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 
              'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph',
-             'deg', 'rad', 'sec', 'hr', 'gal', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'Pa', 'kPa', 'MPa', 'GPa']
+             'rpm', 'deg', 'rad', 'sec', 'hr', 'gal', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'Pa',
+             'kPa', 'MPa', 'GPa']
 
 #%%
 @register_cell_magic
@@ -137,6 +139,7 @@ def sync_namespaces(local_ns):
     local_ns['kin'] = ureg.kip*ureg.inch
     local_ns['kft'] = ureg.kip*ureg.foot
     local_ns['mph'] = ureg.mile/ureg.hour
+    local_ns['rpm'] = ureg.rpm
     local_ns['sec'] = ureg.second
     local_ns['hr'] = ureg.hour
     local_ns['deg'] = ureg.degree
