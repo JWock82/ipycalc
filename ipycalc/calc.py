@@ -380,9 +380,6 @@ def python_to_latex(text):
     # Convert logical operators to latex
     text = text.replace(' and ', '\\~and\\~')
     text = text.replace(' or ', '\\~or\\~')
-
-    # Remove spaces from the raw text
-    text = text.replace(' ', '')
     
     # Adjust inequality symbols
     text = text.replace('<=', '~\\le~')
@@ -395,7 +392,7 @@ def python_to_latex(text):
     # Clean up any greek symbols
     for symbol in greek:
         if symbol in text:
-            text = text.replace(symbol, '\\' + symbol + ' ')
+            text = text.replace(symbol, '\\' + symbol + '~')
     
     # Fix any errors caused by `eta` being similar to other symbols
     text = text.replace('b\\eta', '\\beta')
@@ -436,6 +433,9 @@ def python_to_latex(text):
     # Change out normal parentheses for auto-sizing parentheses
     text = text.replace('(', '\\left(')
     text = text.replace(')', '\\right)')
+
+    # Remove unwanted spaces from the raw text
+    text = text.replace(' ', '')
 
     # Convert '~' symbols back to spaces
     text = text.replace('~', ' ')
@@ -490,7 +490,7 @@ def process_if(text, type):
             latex_text += process_if(else_text, type='elif')
         else:
             latex_text += process_if(else_text, type='else')
-    
+
     return latex_text
 
 #%%
