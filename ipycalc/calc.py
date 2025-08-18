@@ -29,7 +29,7 @@ lbf = ureg.force_pound
 lbm = ureg.pound
 kip = ureg.kip
 ton = ureg.ton
-tonf = ureg.force_ton
+tonf = ureg.ton * ureg.g_0
 plf = ureg.plf
 klf = ureg.klf
 psi = ureg.force_pound/ureg.inch**2
@@ -63,7 +63,7 @@ N = ureg.newton
 kN = ureg.kilonewton
 kgf = ureg.force_kilogram
 tonne = ureg.metric_ton
-tonnef = ureg.force_metric_ton
+tonnef = ureg.metric_ton * ureg.g_0
 Pa = ureg.pascal
 kPa = ureg.kilopascal
 MPa = ureg.megapascal
@@ -160,7 +160,7 @@ def sync_namespaces(local_ns):
     local_ns['MPa'] = ureg.megapascal
     local_ns['GPa'] = ureg.gigapascal
     local_ns['tonne'] = ureg.metric_ton
-    local_ns['tonnef'] = ureg.force_metric_ton
+    local_ns['tonnef'] = ureg.metric_ton * ureg.g_0
 
     # Provide the IPython console with access to the `funit` method
     local_ns['funit'] = funit
