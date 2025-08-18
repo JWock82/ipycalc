@@ -62,16 +62,16 @@ km = ureg.kilometer
 N = ureg.newton
 kN = ureg.kilonewton
 kgf = ureg.force_kilogram
-ton = ureg.metric_ton
+tonne = ureg.metric_ton
 tonnef = ureg.force_metric_ton
 Pa = ureg.pascal
 kPa = ureg.kilopascal
 MPa = ureg.megapascal
 GPa = ureg.gigapascal
 
-unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'plf', 'klf', 'psi', 'psf', 
+unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'ton', 'tonf', 'plf', 'klf', 'psi', 'psf', 
              'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph',
-             'rpm', 'deg', 'rad', 'sec', 'hr', 'gal', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'Pa',
+             'rpm', 'deg', 'rad', 'sec', 'hr', 'gal', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'tonne', 'tonnef', 'Pa',
              'kPa', 'MPa', 'GPa']
 
 #%%
@@ -121,9 +121,9 @@ def sync_namespaces(local_ns):
     local_ns['lbf'] = ureg.force_pound
     local_ns['lbm'] = ureg.pound
     local_ns['kip'] = ureg.kip
-    local_ns['k']= ureg.kip
+    local_ns['k'] = ureg.kip
     local_ns['ton'] = ureg.ton
-    local_ns['tonf'] = ureg.force_ton
+    local_ns['tonf'] = ureg.ton * ureg.g_0
     local_ns['plf'] = ureg.plf
     local_ns['klf'] = ureg.klf
     local_ns['psi'] = ureg.force_pound/ureg.inch**2
