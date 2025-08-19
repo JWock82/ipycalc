@@ -283,8 +283,14 @@ newton = kilogram * meter / second ** 2 = N
 dyne = gram * centimeter / second ** 2 = dyn
 force_kilogram = g_0 * kilogram = kgf = kilogram_force = pond
 force_gram = g_0 * gram = gf = gram_force
-force_metric_ton = g_0 * metric_ton = tf = metric_ton_force = force_t = t_force
+force_metric_ton = g_0 * metric_ton = tf = metric_ton_force = force_t = ton_force
+tonnef = force_metric_ton
 atomic_unit_of_force = E_h / a_0 = a_u_force
+
+# Distributed Force
+[dist_force] = [force] / [length]
+plf = force_pound / foot
+klf = kip / foot
 
 # Energy
 [energy] = [force] * [length]
@@ -331,6 +337,11 @@ mercury_60F = 13.5568 * kilogram / liter = Hg_60F   # approximate
 water_39F = 0.999972 * kilogram / liter = water_4C  # approximate
 water_60F = 0.999001 * kilogram / liter             # approximate
 
+# Unit weight
+[unit_weight] = [force] / [volume]
+pcf = pound_force / foot ** 3
+kcf = kip / foot ** 3
+
 # Pressure
 [pressure] = [force] / [area]
 pascal = newton / meter ** 2 = Pa
@@ -339,7 +350,9 @@ bar = 1e5 * pascal
 technical_atmosphere = kilogram * g_0 / centimeter ** 2 = at
 torr = atm / 760
 pound_force_per_square_inch = force_pound / inch ** 2 = psi
+psf = force_pound / foot ** 2
 kip_per_square_inch = kip / inch ** 2 = ksi
+ksf = kip / foot **2
 millimeter_Hg = millimeter * Hg * g_0 = mmHg = mm_Hg = millimeter_Hg_0C
 centimeter_Hg = centimeter * Hg * g_0 = cmHg = cm_Hg = centimeter_Hg_0C
 inch_Hg = inch * Hg * g_0 = inHg = in_Hg = inch_Hg_32F
@@ -353,6 +366,10 @@ sound_pressure_level = 20e-6 * pascal = SPL
 # Torque
 [torque] = [force] * [length]
 foot_pound = foot * force_pound = ft_lb = footpound
+lbft = force_pound * foot
+lbin = force_pound * inch
+kipft = kip * foot = kft
+kipin = kip * inch = kin
 
 # Viscosity
 [viscosity] = [pressure] * [time]
@@ -611,6 +628,7 @@ neper = 1 ; logbase: 2.71828182845904523536028747135266249775724709369995; logfa
     dram = pound / 256 = dr = avoirdupois_dram = avdp_dram = drachm
     ounce = pound / 16 = oz = avoirdupois_ounce = avdp_ounce
     pound = 7e3 * grain = lb = avoirdupois_pound = avdp_pound
+    lbm = pound
     stone = 14 * pound
     quarter = 28 * stone
     bag = 94 * pound
@@ -622,8 +640,11 @@ neper = 1 ; logbase: 2.71828182845904523536028747135266249775724709369995; logfa
     slinch = g_0 * pound * second ** 2 / inch = blob = slugette
 
     force_ounce = g_0 * ounce = ozf = ounce_force
+    ozf = force_pound / 16
     force_pound = g_0 * pound = lbf = pound_force
+    lbf = force_pound
     force_ton = g_0 * ton = _ = ton_force = force_short_ton = short_ton_force
+    tonf = force_ton
     force_long_ton = g_0 * long_ton = _ = long_ton_force
     kip = 1e3 * force_pound
     poundal = pound * foot / second ** 2 = pdl
