@@ -82,10 +82,11 @@ def calc(line, cell, local_ns):
     for i, ln in enumerate(code_lines):
         if ln == '' or ln == '\n':
             code_lines.pop(i)
-    
+
     # Arrays will be used to format the output in a tabular way for display in Jupyter
     # Start a parent array that will hold all the output.
-    text = '\\begin{array} {lpwidth{0.25\\linewidth} lpwidth{0.5\\linewidth} lpwidth{0.25\\linewidth}}\n'
+    # text = '\\begin{array} {lpwidth{0.25\\linewidth} lpwidth{0.5\\linewidth} lpwidth{0.25\\linewidth}}\n'
+    text = '\\begin{array}{l l l}\n'  # KaTeX friendly version of the line above
 
     # Process each code line
     for ln in code_lines:
@@ -93,7 +94,7 @@ def calc(line, cell, local_ns):
 
     # Close of the parent array that contains all the lines
     text += '\\end{array}'
-    
+
     # Display the cell's results
     display(Markdown('$' + text + '$'))
 
@@ -675,9 +676,11 @@ def linebreaks(text, format='text'):
     # Format text with linebreaks
     if format == 'text':
         text = text.replace('\\\\', '}}} \\\\ {\\small{\\textsf{')
-        return '\\begin{array}{@{}l@{}} {\\small{\\textsf{' + text + '}}} \\end{array}'
+        # return '\\begin{array}{@{}l@{}} {\\small{\\textsf{' + text + '}}} \\end{array}'
+        return '\\begin{array}{l} {\\small{\\textsf{' + text + '}}} \\end{array}'  # This version of the line above is KaTeX friendly
     
     # Math equations having linebreaks should have an indentation at the new line for clarity reading the equation
     else:
         text = text.replace('\\\\', '}} \\\\ \\hspace{2em} {\\small{')
-        return '\\begin{array}{@{}l@{}} {\\small{' + text + '}} \\end{array}'
+        # return '\\begin{array}{@{}l@{}} {\\small{' + text + '}} \\end{array}'
+        return '\\begin{array}{l} {\\small{' + text + '}} \\end{array}'  # This version of the line above is KaTeX friendly
