@@ -269,8 +269,7 @@ def process_line(calc_line, local_ns):
     else:
 
         if unit != None:
-            # value = str((eval(equation).to(unit)).magnitude) + '*' + unit
-            value = ureg.Quantity(str((eval(equation).to(unit)).magnitude), unit)
+            value = str((eval(equation).to(unit)).magnitude) + '*' + unit
         elif precision != None:
             # Unitless values require special consideration. Pint leaves values in terms of the
             # units used to calculate them. That means 60 ft / 12 in = 5 ft/in instead of 60.
