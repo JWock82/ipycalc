@@ -1,4 +1,5 @@
 import os
+import re
 
 from math import pi, sqrt, sin, cos, asin, acos, atan, tan, sinh, cosh, tanh, log, log10
 
@@ -44,6 +45,8 @@ rad = ureg.radian
 sec = ureg.second
 hr = ureg.hour
 gal = ureg.gallon
+degF = ureg.degF
+degC = ureg.degC
 
 # Add some useful metric units
 g = ureg.gram
@@ -64,7 +67,7 @@ GPa = ureg.gigapascal
 
 unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'ton', 'tonf', 'plf', 'klf', 'psi', 'psf', 
              'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph',
-             'rpm', 'deg', 'rad', 'sec', 'hr', 'gal', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'tonne', 'tonnef', 'Pa',
+             'rpm', 'deg', 'rad', 'sec', 'hr', 'gal', 'degF', 'degC', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'tonne', 'tonnef', 'Pa',
              'kPa', 'MPa', 'GPa']
 
 #%%
@@ -139,6 +142,8 @@ def sync_namespaces(local_ns):
     local_ns['deg'] = ureg.degree
     local_ns['rad'] = ureg.radian
     local_ns['gal'] = ureg.gallon
+    local_ns['degF'] = ureg.degF
+    local_ns['degC'] = ureg.degC
     
     # Add some useful metric units
     local_ns['mm'] = ureg.millimeter
@@ -264,7 +269,8 @@ def process_line(calc_line, local_ns):
     else:
 
         if unit != None:
-            value = str((eval(equation).to(unit)).magnitude) + '*' + unit
+            # value = str((eval(equation).to(unit)).magnitude) + '*' + unit
+            value = ureg.Quantity(str((eval(equation).to(unit)).magnitude), unit)
         elif precision != None:
             # Unitless values require special consideration. Pint leaves values in terms of the
             # units used to calculate them. That means 60 ft / 12 in = 5 ft/in instead of 60.
@@ -606,6 +612,11 @@ def frac(text):
             denom += char
         
         text = text.replace('(' + num + ')/(' + denom + ')', '\\dfrac{' + num + '}{' + denom + '}')
+
+    # Correct any remaining instances of `\\dfrac{a}{b}^{c}` to be `\\dfrac{a}{b^c}`
+    pattern = r"\\dfrac\{(.*?)\}\{(.*?)\}\^\{(.*?)\}"
+    repl = r"\\dfrac{\1}{\2^\3}"
+    text = re.sub(pattern, repl, text)
     
     return text
 
