@@ -287,10 +287,11 @@ def process_line(calc_line, local_ns):
         else:
             value = str(eval(equation))
     
-    # 'in' is a keyword in Python. Remove it from the expression we just created and replace it with 'inch'
-    value = value.replace('inch', '~~~~')  # Used to prevent 'inchch' after the next line runs
-    value = value.replace('in', 'inch')
-    value = value.replace('~~~~', 'inch')
+    # When pint returns unit strings, it uses abbreviated forms like 'in' instead of 'inch'
+    # 'in' is a Python keyword, so we need to convert it back to 'inch' for eval()
+    # Use regex to replace 'in' only when it appears as a standalone unit (word boundary)
+    import re
+    value = re.sub(r'\bin\b', 'inch', value)
     value = value.strip()
     
     # In the case of dimensionless units due to units canceling out, there will be an extra '*' at

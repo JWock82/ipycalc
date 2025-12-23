@@ -156,7 +156,9 @@ count = []
 # although floating-point conversion may introduce inaccuracies
 
 # Angle
-turn = 2 * π * radian = _ = revolution = cycle = circle
+turn = 2 * π * radian = _ = circle
+cycle = 1  # Dimensionless count for frequency (1 cycle = 1 complete oscillation)
+revolution = cycle  # For rpm to Hz conversions (1 revolution = 1 cycle, not an angular measure)
 degree = π / 180 * radian = deg = arcdeg = arcdegree = angular_degree
 arcminute = degree / 60 = arcmin = arc_minute = angular_minute
 arcsecond = arcminute / 60 = arcsec = arc_second = angular_second
