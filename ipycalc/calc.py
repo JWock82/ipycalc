@@ -13,6 +13,9 @@ ureg = pint.UnitRegistry(directory + '\\ipycalc_en.txt')  # Creates the units re
 ureg.default_system = 'US'  # US Customary unit system
 ureg.formatter.default_format = '~P'  # Shorthand units w/ pretty formatting
 
+# Enable automatic handling of offset units (temperatures)
+ureg.autoconvert_offset_to_baseunit = True
+
 # Create shortcuts to the unit registry's units in this module's namespace
 inch = ureg.inch
 ft = ureg.foot
@@ -40,9 +43,11 @@ kin = ureg.kin
 kft = ureg.kft
 mph = ureg.mph
 rpm = ureg.rpm
+Hz = ureg.hertz
 deg = ureg.degree
 rad = ureg.radian
 sec = ureg.second
+min = ureg.minute
 hr = ureg.hour
 gal = ureg.gallon
 degF = ureg.degF
@@ -67,7 +72,7 @@ GPa = ureg.gigapascal
 
 unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'ton', 'tonf', 'plf', 'klf', 'psi', 'psf', 
              'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph',
-             'rpm', 'deg', 'rad', 'sec', 'hr', 'gal', 'degF', 'degC', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'tonne', 'tonnef', 'Pa',
+             'rpm', 'Hz', 'deg', 'rad', 'sec', 'min', 'hr', 'gal', 'degF', 'degC', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'tonne', 'tonnef', 'Pa',
              'kPa', 'MPa', 'GPa']
 
 #%%
@@ -137,7 +142,9 @@ def sync_namespaces(local_ns):
     local_ns['kft'] = ureg.kft
     local_ns['mph'] = ureg.mph
     local_ns['rpm'] = ureg.rpm
+    local_ns['Hz'] = ureg.hertz
     local_ns['sec'] = ureg.second
+    local_ns['min'] = ureg.minute
     local_ns['hr'] = ureg.hour
     local_ns['deg'] = ureg.degree
     local_ns['rad'] = ureg.radian
@@ -614,7 +621,7 @@ def frac(text):
 
     # Correct any remaining instances of `\\dfrac{a}{b}^{c}` to be `\\dfrac{a}{b^c}`
     pattern = r"\\dfrac\{(.*?)\}\{(.*?)\}\^\{(.*?)\}"
-    repl = r"\\dfrac{\1}{\2^\3}"
+    repl = r"\\dfrac{\1}{\2^{{\3}}}"
     text = re.sub(pattern, repl, text)
     
     return text
