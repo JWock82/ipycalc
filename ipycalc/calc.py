@@ -234,13 +234,20 @@ def process_line(calc_line, local_ns):
         # Both precision and units were requested
         precision, unit = value_format.split('*', 1)
         precision = int(precision)
+        is_string_format = False
+    elif value_format.strip().lower() == 's':
+        # String format requested
+        precision, unit = None, None
+        is_string_format = True
     elif value_format != '':
         # Precision was requested without units
         precision, unit = value_format, None
         precision = int(precision)
+        is_string_format = False
     else:
         # No precision and no units were requested
         precision = None
+        is_string_format = False
         if equation != '':
             # An equation has been provided
             if type(eval(equation)) == ureg.Quantity:
@@ -271,7 +278,11 @@ def process_line(calc_line, local_ns):
             # to make the `to` function available. These units should also cancel each other out.
             value = str((eval(variable)*inch/inch).to(inch/inch))
         else:
-            value = str(eval(variable))
+            eval_result = eval(variable)
+            if isinstance(eval_result, str):
+                value = repr(eval_result)  # Use repr to get quoted string
+            else:
+                value = str(eval_result)
 
     else:
 
@@ -285,7 +296,11 @@ def process_line(calc_line, local_ns):
             # to make the `to` function available. These units should also cancel each other out.
             value = str((eval(equation)*inch/inch).to(inch/inch))
         else:
-            value = str(eval(equation))
+            eval_result = eval(equation)
+            if isinstance(eval_result, str):
+                value = repr(eval_result)  # Use repr to get quoted string
+            else:
+                value = str(eval_result)
     
     # When pint returns unit strings, it uses abbreviated forms like 'in' instead of 'inch'
     # 'in' is a Python keyword, so we need to convert it back to 'inch' for eval()
@@ -317,12 +332,23 @@ def process_line(calc_line, local_ns):
     latex_value = ''
     if value_format != '' or equation == '':
 
-        if unit != None:
+        if is_string_format:
+            # String format requested with 's'
+            eval_val = eval(value)
+            if isinstance(eval_val, str):
+                latex_value = '=\\textsf{' + eval_val + '}'
+            else:
+                latex_value = '=' + str(eval_val)
+        elif unit != None:
             latex_value = '=' + funit(eval(value), precision)
         elif precision != None:
             latex_value = '=' + funit((eval(value)*inch/inch).to(inch/inch), precision)
         else:
-            latex_value = str(eval(value))
+            eval_val = eval(value)
+            if isinstance(eval_val, str):
+                latex_value = '=\\textsf{' + eval_val + '}'
+            else:
+                latex_value = '=' + str(eval_val)
 
     # Known issue: The characters '.' and '-' will evaluate as not numeric below
     # # This next block allows values to be strings
@@ -362,6 +388,18 @@ def python_to_latex(text):
     :return: Latex text
     :rtype: str
     """
+    
+    # Replace all quoted strings (both single and double quotes) with unquoted sans-serif versions
+    # Protect spaces within strings by temporarily replacing them
+    import re
+    # Handle double-quoted strings - replace spaces with placeholder
+    def replace_string(match):
+        content = match.group(1).replace(' ', '~')
+        return '\\textsf{' + content + '}'
+    
+    text = re.sub(r'"([^"]*)"', replace_string, text)
+    # Handle single-quoted strings - replace spaces with placeholder
+    text = re.sub(r"'([^']*)'", replace_string, text)
     
     # Change spaces we want to keep to the '~' symbol temporarily
     text = text.replace(' if ', '~if~')
