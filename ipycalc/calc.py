@@ -265,47 +265,30 @@ def process_line(calc_line, local_ns):
                 # The variable does not carry units
                 unit = None
 
-    # Sometimes the user may want to display a value without an equation
-    if equation == '':
-
-        if unit != None:
-            value = str((eval(variable).to(unit)).magnitude) + '*' + unit
-        elif precision != None:
-            # Unitless values require special consideration. Pint leaves values in terms of the
-            # units used to calculate them. That means 60 ft / 12 in = 5 ft/in instead of 60.
-            # As a workaround we'll convert that quantity to some units that cancel each other out.
-            # In cases where there are no units (a pure float) we'll need to tag on some units
-            # to make the `to` function available. These units should also cancel each other out.
-            value = str((eval(variable)*inch/inch).to(inch/inch))
+    # Determine what expression to evaluate (equation or variable)
+    expr_to_eval = equation if equation != '' else variable
+    
+    # Helper function to compute the value string
+    def compute_value(expression, target_unit, target_precision):
+        """Computes the value string for storage and later evaluation"""
+        if target_unit != None:
+            return str((eval(expression).to(target_unit)).magnitude) + '*' + target_unit
+        elif target_precision != None:
+            # Unitless values - convert to ensure proper cancellation
+            return str((eval(expression)*inch/inch).to(inch/inch))
         else:
-            eval_result = eval(variable)
+            eval_result = eval(expression)
             if isinstance(eval_result, str):
-                value = repr(eval_result)  # Use repr to get quoted string
+                return repr(eval_result)  # Use repr to get quoted string
             else:
-                value = str(eval_result)
-
-    else:
-
-        if unit != None:
-            value = str((eval(equation).to(unit)).magnitude) + '*' + unit
-        elif precision != None:
-            # Unitless values require special consideration. Pint leaves values in terms of the
-            # units used to calculate them. That means 60 ft / 12 in = 5 ft/in instead of 60.
-            # As a workaround we'll convert that quantity to some units that cancel each other out.
-            # In cases where there are no units (a pure float) we'll need to tag on some units
-            # to make the `to` function available. These units should also cancel each other out.
-            value = str((eval(equation)*inch/inch).to(inch/inch))
-        else:
-            eval_result = eval(equation)
-            if isinstance(eval_result, str):
-                value = repr(eval_result)  # Use repr to get quoted string
-            else:
-                value = str(eval_result)
+                return str(eval_result)
+    
+    # Compute the value
+    value = compute_value(expr_to_eval, unit, precision)
     
     # When pint returns unit strings, it uses abbreviated forms like 'in' instead of 'inch'
     # 'in' is a Python keyword, so we need to convert it back to 'inch' for eval()
     # Use regex to replace 'in' only when it appears as a standalone unit (word boundary)
-    import re
     value = re.sub(r'\bin\b', 'inch', value)
     value = value.strip()
     
@@ -391,8 +374,6 @@ def python_to_latex(text):
     
     # Replace all quoted strings (both single and double quotes) with unquoted sans-serif versions
     # Protect spaces within strings by temporarily replacing them
-    import re
-    # Handle double-quoted strings - replace spaces with placeholder
     def replace_string(match):
         content = match.group(1).replace(' ', '~')
         return '\\textsf{' + content + '}'
@@ -541,7 +522,6 @@ def process_if(text, type):
 
     return latex_text
 
-#%%
 def curly_brackets(fname, text):
 
     while fname + '(' in text:
