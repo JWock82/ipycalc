@@ -274,7 +274,12 @@ def process_line(calc_line, local_ns):
         if target_unit != None:
             return str((eval(expression).to(target_unit)).magnitude) + '*' + target_unit
         elif target_precision != None:
-            # Unitless values - convert to ensure proper cancellation
+            # Unitless values - convert to ensure proper cancellation:
+            # Unitless values require special consideration. Pint leaves values in terms of the
+            # units used to calculate them. That means 60 ft / 12 in = 5 ft/in instead of 60.
+            # As a workaround we'll convert that quantity to some units that cancel each other out.
+            # In cases where there are no units (a pure float) we'll need to tag on some units
+            # to make the `to` function available. These units should also cancel each other out.
             return str((eval(expression)*inch/inch).to(inch/inch))
         else:
             eval_result = eval(expression)
