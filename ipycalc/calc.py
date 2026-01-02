@@ -174,9 +174,6 @@ def sync_namespaces(local_ns):
 #%%
 def process_line(calc_line, local_ns):
 
-    # Ampersand symbols will mess with latex table formatting unless they have a `\` in front of them
-    calc_line = calc_line.replace('&', r'&')
-
     # Break up the line into components: `description`, `variable`, `equation`, `value` and `reference`
     # Split `reference` off from the rest of the line
     if '#' in calc_line:
@@ -307,6 +304,8 @@ def process_line(calc_line, local_ns):
     
     # Format the description
     if description != '':
+        # Escape ampersand symbols for latex table formatting
+        description = description.replace('&', r'\&')
         description = description + ': '
     
     # Format the variable to be Python friendly
@@ -355,6 +354,8 @@ def process_line(calc_line, local_ns):
 
     # Format the reference
     reference = reference.strip()
+    # Escape ampersand symbols for latex table formatting
+    reference = reference.replace('&', r'\&')
 
     # Return the line formatted in all its glory
     latex_text = linebreaks(description, 'text') + '&' + linebreaks(latex_variable + latex_equation + latex_value, 'math') + '&' + linebreaks(reference, 'text') + '\\\\ \n'
@@ -689,8 +690,8 @@ def funit(value, precision=None):
     # Step through each character in the value
     for i, char in enumerate(latex_value):
 
-        # Find the first non-numeric non-decimal character
-        if not latex_value[i].isnumeric() and latex_value[i] !='.':
+        # Find the first non-numeric non-decimal character, excluding the minus sign for negative numbers
+        if not latex_value[i].isnumeric() and latex_value[i] !='.' and latex_value[i] !='-':
 
             # Add a space between the value and the units
             latex_value = latex_value[0:i] + ' \\ ' + latex_value[i:len(latex_value)]
