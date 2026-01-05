@@ -47,7 +47,7 @@ Hz = ureg.hertz
 deg = ureg.degree
 rad = ureg.radian
 sec = ureg.second
-min = ureg.minute
+minute = ureg.minute
 hr = ureg.hour
 gal = ureg.gallon
 degF = ureg.degF
@@ -72,7 +72,7 @@ GPa = ureg.gigapascal
 
 unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'ton', 'tonf', 'plf', 'klf', 'psi', 'psf', 
              'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph',
-             'rpm', 'Hz', 'deg', 'rad', 'sec', 'min', 'hr', 'gal', 'degF', 'degC', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'tonne', 'tonnef', 'Pa',
+             'rpm', 'Hz', 'deg', 'rad', 'sec', 'minute', 'hr', 'gal', 'degF', 'degC', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'tonne', 'tonnef', 'Pa',
              'kPa', 'MPa', 'GPa']
 
 #%%
@@ -144,7 +144,7 @@ def sync_namespaces(local_ns):
     local_ns['rpm'] = ureg.rpm
     local_ns['Hz'] = ureg.hertz
     local_ns['sec'] = ureg.second
-    local_ns['min'] = ureg.minute
+    local_ns['minute'] = ureg.minute
     local_ns['hr'] = ureg.hour
     local_ns['deg'] = ureg.degree
     local_ns['rad'] = ureg.radian
@@ -311,7 +311,9 @@ def process_line(calc_line, local_ns):
     # Format the variable to be Python friendly
     variable = variable.replace('(', '')
     variable = variable.replace(')', '')
-    variable = variable.replace(',', '')  # Allowing commas in variable names would get messy
+    variable = variable.replace('{', '')  # Remove curly braces for valid Python variable names
+    variable = variable.replace('}', '')  # Remove curly braces for valid Python variable names
+    variable = variable.replace(',', '')  # Remove commas for valid Python variable names
     variable = variable.replace(' ', '')
     variable = variable.replace('lambda', 'lamb')  # lambda is a reserved word in python
 

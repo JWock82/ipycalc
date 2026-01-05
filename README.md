@@ -1,5 +1,5 @@
 # ipycalc
-Simple Engineering Calculations in Python
+Simple Engineering Calculations in Jupyter
 
 Turn the contents of a Jupyter cell into a formatted calculation by following the steps below:
 
@@ -26,7 +26,7 @@ Key components of the `ipycalc` syntax are:
 Here are a few useful things to keep in mind when using `ipycalc`:
 
 * Subscripts can be added by using the `_` character to indicate the start of a subscript.
-* Greek characters included in the `python_expression` can just be written out (e.g. `epsilon`). To include greek characters in the Variable Description or the Reference Text, you can use Jupyter's Markdown Latex tags (e.g. `$\epsilon$`).
+* Greek characters included in the `python_expression` can just be written out (e.g. `epsilon`). To include greek characters in the Variable Description or the Reference Text, you can use Jupyter's Markdown Latex tags (e.g. `$\epsilon$`). Note that the greek character `psi` is ambiguous with the unit psi (pounds per square inch), so for that character specifically you'll need to use `\grpsi` to tell `ipycalc` you want the greek character rather than the unit.
 * To stack fractions place the numerator and denominater in parentheses: (num)/(denom) yields $\dfrac{num}{denom}$.
 * `if` statements and `else` statements are available using python's inline `if` statement (terniary) notation.
 * Square roots can be displayed using `sqrt`.
