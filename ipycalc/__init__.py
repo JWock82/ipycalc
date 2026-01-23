@@ -5,6 +5,20 @@ from nbconvert.preprocessors import TagRemovePreprocessor
 class ipycalcExporter(WebPDFExporter):
     """
     A custom PDF exporter for ipycalc.
+    
+    Exporters in nbconvert are used to convert Jupyter notebooks (.ipynb files) 
+    into other formats such as HTML, PDF, Markdown, etc. This exporter extends 
+    the WebPDFExporter to create PDF files with custom styling specific to ipycalc.
+    
+    The exporter automatically:
+    - Applies the ipycalc custom template with proper print margins
+    - Embeds images directly in the output
+    - Hides cells tagged with 'hide_cell' 
+    - Hides inputs tagged with 'hide_input'
+    - Removes cell execution prompts (In[1], Out[1], etc.)
+    
+    This exporter is registered as an entry point so it can be selected in 
+    JupyterLab via "File -> Save and Export Notebook As... -> Ipycalc"
     """
 
     # This is the name of the folder containing the template in `ipycalc`
@@ -29,10 +43,8 @@ class ipycalcExporter(WebPDFExporter):
         self.exclude_input_prompt=True
         self.exclude_output_prompt=True
 
-    @property
-    def _extra_template_basedirs(self):
-        return super()._default_extra_template_basedirs() + [self.template_dir]
-    
-    def _template_name_default(self):
-        return os.path.join(self.pkg_dir, self.custom_template_name)
-    
+        # Set the template directory for nbconvert to find custom templates
+        self.extra_template_basedirs = [self.template_dir]
+
+        # Set the template name to use
+        self.template_name = self.custom_template_name
