@@ -1,9 +1,9 @@
 @page {
-    margin: 0.5in; /* Margin for each printed piece of paper */
+    margin: 0.5in !important; /* Margin for each printed piece of paper */
 }
   
 @page :first {
-    margin-top: 0.5in; /* Top margin for first page of paper */
+    margin-top: 0.5in !important; /* Top margin for first page of paper */
 }
 
 @page {
