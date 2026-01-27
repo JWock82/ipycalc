@@ -12,9 +12,23 @@
 
 @media print {
 
+    /* Reset body margins and padding to zero - page margins are set in @page rule above */
     body {
-        margin: 0;
+        margin: 0 !important;
+        padding: 0 !important;
         zoom: 100%; /* Adjust this value if you want wider content to fit */
+    }
+
+    /* Override any margins/padding from the lab template on all elements */
+    body * {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Ensure notebook container elements have no margins or padding */
+    #notebook-container, .jp-Notebook, .jp-Cell {
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     .page-break {
