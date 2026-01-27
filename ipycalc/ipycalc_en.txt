@@ -155,6 +155,9 @@ count = []
 # Conversion factors are exact (except when noted),
 # although floating-point conversion may introduce inaccuracies
 
+# Dimensionless
+percent = 0.01 = pct
+
 # Angle
 turn = 2 * π * radian = _ = circle
 cycle = 1  # Dimensionless count for frequency (1 cycle = 1 complete oscillation)

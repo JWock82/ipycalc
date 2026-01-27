@@ -69,11 +69,13 @@ Pa = ureg.pascal
 kPa = ureg.kilopascal
 MPa = ureg.megapascal
 GPa = ureg.gigapascal
+percent = ureg.percent
+pct = ureg.pct
 
 unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'ton', 'tonf', 'plf', 'klf', 'psi', 'psf', 
              'ksi', 'ksf', 'pcf', 'kcf', 'lbin', 'lbft', 'kipin', 'kipft', 'kin', 'kft', 'mph',
              'rpm', 'Hz', 'deg', 'rad', 'sec', 'minute', 'hr', 'gal', 'degF', 'degC', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'tonne', 'tonnef', 'Pa',
-             'kPa', 'MPa', 'GPa']
+             'kPa', 'MPa', 'GPa', 'percent', 'pct']
 
 #%%
 @register_cell_magic
@@ -167,6 +169,8 @@ def sync_namespaces(local_ns):
     local_ns['GPa'] = ureg.gigapascal
     local_ns['tonne'] = ureg.tonne
     local_ns['tonnef'] = ureg.tonnef
+    local_ns['percent'] = ureg.percent
+    local_ns['pct'] = ureg.pct
 
     # Provide the IPython console with access to the `funit` method
     local_ns['funit'] = funit
@@ -209,6 +213,10 @@ def process_line(calc_line, local_ns):
     equation = equation.replace('^prime', '_prime')
     equation = equation.replace('^', '**')
     equation = equation.replace('lambda', 'lamb')
+    
+    # Convert percentage symbols to percent units
+    # Match % symbols that follow numbers/variables (but not in strings)
+    equation = re.sub(r'(\d+(?:\.\d+)?)\s*%', r'\1*percent', equation)
 
     # Resolve prime symbols in the variable before we compare it to the equation, which has already had them resolved
     variable = variable.replace('^prime', '_prime')
@@ -479,15 +487,20 @@ def python_to_latex(text):
 
     # Provide a space before any units
     text = text.replace('*inch', ' \\ in')
+    
+    # Handle percent specially - use % symbol instead of word
+    text = text.replace('*percent', '\\%')
+    text = text.replace('*pct', '\\%')
     for unit in unit_list:
-        text = text.replace('*' + unit, ' \\ ' + unit)
+        if unit not in ['percent', 'pct']:  # Skip percent as we already handled it
+            text = text.replace('*' + unit, ' \\ ' + unit)
 
     # Replace multiplication symbols in front of numbers with a multiplication dot
     for i in range(10):
         text = text.replace('*' + str(i), '\\cdot{}' + str(i))
     
-    # Remove all other multiplication symbols
-    text = text.replace('*', '')
+    # Convert remaining multiplication symbols to centered dots for better readability
+    text = text.replace('*', '\\cdot{}')
 
     # Return the Latex text
     return text
@@ -688,6 +701,9 @@ def funit(value, precision=None):
         latex_value = str(round(value, precision))
     else:
         latex_value = str(value)
+    
+    # Replace pct unit with % symbol early
+    latex_value = latex_value.replace('pct', '%')
 
     # Step through each character in the value
     for i, char in enumerate(latex_value):
@@ -700,7 +716,10 @@ def funit(value, precision=None):
 
             # The round function tags on a .0 after it rounds floats. It doesn't do it to integers. Correct this.
             if precision == 0:
-                latex_value = latex_value.replace('.0', '')                
+                latex_value = latex_value.replace('.0', '')
+            
+            # Escape the % symbol for LaTeX
+            latex_value = latex_value.replace('%', '\\%')
 
             # Return the formatted value
             return latex_value
