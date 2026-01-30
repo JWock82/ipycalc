@@ -411,6 +411,10 @@ def python_to_latex(text):
     # Add brackets to superscripts and subscripts if they are missing
     text = sscript_curly('^', text)
     text = sscript_curly('_', text)
+    
+    # Wrap subscripted variables that are raised to a power to avoid ambiguity
+    # Convert X_{sub}^{exp} to {X_{sub}}^{exp} so the exponent clearly applies to the whole variable
+    text = re.sub(r'(\w+_\{[^}]+\})(\^\{[^}]+\})', r'{\1}\2', text)
 
     # Convert `lamb` back to `lambda` for latex
     text = text.replace('lamb', 'lambda')
@@ -659,10 +663,13 @@ def frac(text):
         
         text = text.replace('(' + num + ')/(' + denom + ')', '\\dfrac{' + num + '}{' + denom + '}')
 
+    # Note: The following regex was disabled because it incorrectly moves exponents from
+    # numerators into denominators. For example, ((D_c + 2*t_w)**2)/(4) should remain as
+    # \dfrac{(D_c+2*t_w)^{2}}{4}, not \dfrac{(D_c+2*t_w)}{4^{2}}
     # Correct any remaining instances of `\\dfrac{a}{b}^{c}` to be `\\dfrac{a}{b^c}`
-    pattern = r"\\dfrac\{(.*?)\}\{(.*?)\}\^\{(.*?)\}"
-    repl = r"\\dfrac{\1}{\2^{{\3}}}"
-    text = re.sub(pattern, repl, text)
+    # pattern = r"\\dfrac\{(.*?)\}\{(.*?)\}\^\{(.*?)\}"
+    # repl = r"\\dfrac{\1}{\2^{{\3}}}"
+    # text = re.sub(pattern, repl, text)
     
     return text
 
