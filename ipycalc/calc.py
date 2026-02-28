@@ -687,7 +687,27 @@ def frac(text):
                 paren_count += 1
             denom += char
         
-        text = text.replace('(' + num + ')/(' + denom + ')', '\\dfrac{' + num + '}{' + denom + '}')
+        # Check if the denominator's closing paren is immediately followed by an exponent.
+        # In Python, (a)/(b)**x means a / (b**x), so the exponent belongs in the denominator.
+        # But ((a)/(b))**x means (a/b)**x, which is handled correctly because the extra outer
+        # paren prevents the exponent from appearing right after the denominator's closing paren.
+        remaining = rhs[len(denom) + 1:]  # +1 to skip the closing ')'
+        exp_str = ''
+        if remaining.startswith('^{'):
+            brace_count = 0
+            for k, c in enumerate(remaining):
+                if c == '{':
+                    brace_count += 1
+                elif c == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        exp_str = remaining[:k+1]  # e.g., '^{v_d}'
+                        break
+
+        if exp_str:
+            text = text.replace('(' + num + ')/(' + denom + ')' + exp_str, '\\dfrac{' + num + '}{' + denom + exp_str + '}')
+        else:
+            text = text.replace('(' + num + ')/(' + denom + ')', '\\dfrac{' + num + '}{' + denom + '}')
 
     # Note: The following regex was disabled because it incorrectly moves exponents from
     # numerators into denominators. For example, ((D_c + 2*t_w)**2)/(4) should remain as
