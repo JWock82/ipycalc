@@ -367,8 +367,34 @@ def process_line(calc_line, local_ns):
     # Escape ampersand symbols for latex table formatting
     reference = reference.replace('&', r'\&')
 
-    # Return the line formatted in all its glory
-    latex_text = linebreaks(description, 'text') + '&' + linebreaks(latex_variable + latex_equation + latex_value, 'math') + '&' + linebreaks(reference, 'text') + '\\\\ \n'
+    # Return the line formatted in all its glory.
+    # linebreaks() splits each column's text on "\\" linebreak markers and returns
+    # a list of individually formatted lines. For example, if description has 2 lines
+    # and reference has 1, we get desc=['line1','line2'], ref=['line1'].
+    # We then emit one parent array row per index, filling in blanks for shorter columns.
+    # This guarantees the first line of each column sits on the same row (top-aligned).
+
+    # Get the list of formatted lines for the description column (left column)
+    desc = linebreaks(description, 'text')
+    # Get the list of formatted lines for the equation column (middle column)
+    eq = linebreaks(latex_variable + latex_equation + latex_value, 'math')
+    # Get the list of formatted lines for the reference column (right column)
+    ref = linebreaks(reference, 'text')
+
+    # Determine how many parent rows we need (driven by the column with the most lines)
+    n = max(len(desc), len(eq), len(ref))
+    # Initialize the output string that will hold all the rows for this calc line
+    latex_text = ''
+    # Loop through each row index
+    for i in range(n):
+        # Use the description line at this index, or blank if the column is shorter
+        d = desc[i] if i < len(desc) else ''
+        # Use the equation line at this index, or blank if the column is shorter
+        e = eq[i] if i < len(eq) else ''
+        # Use the reference line at this index, or blank if the column is shorter
+        r = ref[i] if i < len(ref) else ''
+        # Assemble the three cells into one parent array row separated by & delimiters
+        latex_text += d + '&' + e + '&' + r + '\\\\ \n'
 
     # There will be a double equals sign if the equation is not being displayed
     latex_text = latex_text.replace('==', '=')
@@ -739,18 +765,34 @@ def funit(value, precision=None):
 
 def linebreaks(text, format='text'):
     
-    # Normally in Latex a simple \\ will create a linebreak. However, MathJax in Jupyter applies the line break across the entire row of a table array, rather than just across the individual cell. To work around this, we'll use another table array within the table cell to contain the linebreak to just the cell.
+    # This function splits a cell's text on "\\\\" linebreak markers and returns a list
+    # of formatted lines. Previously this wrapped lines in a nested \\begin{array} mini-table,
+    # but KaTeX does not support [t] top-alignment on nested arrays. Instead, each line
+    # is returned separately so the caller can emit them as individual parent array rows.
+    # This ensures top-left alignment across all columns and works with both KaTeX and MathJax.
 
-    # Note that \\ becomes \\\\ when formatted as a string in Python since \ is considered an escape character in Python.
+    # Split the text on "\\\\" (which is how the user writes linebreaks in their input)
+    lines = text.split('\\\\')
 
-    # Format text with linebreaks
+    # Format text columns (description, reference) as sans-serif
     if format == 'text':
-        text = text.replace('\\\\', '}}} \\\\ {\\small{\\textsf{')
-        # return '\\begin{array}{@{}l@{}} {\\small{\\textsf{' + text + '}}} \\end{array}'
-        return '\\begin{array}{l} {\\small{\\textsf{' + text + '}}} \\end{array}'  # This version of the line above is KaTeX friendly
+        # Wrap each non-empty line in \\small and \\textsf for consistent text formatting
+        # Empty lines become empty strings (blank cells in that row)
+        return ['{\\small{\\textsf{' + ln + '}}}' if ln else '' for ln in lines]
     
-    # Math equations having linebreaks should have an indentation at the new line for clarity reading the equation
+    # Format math columns (equation) with indentation on continuation lines
     else:
-        text = text.replace('\\\\', '}} \\\\ \\hspace{2em} {\\small{')
-        # return '\\begin{array}{@{}l@{}} {\\small{' + text + '}} \\end{array}'
-        return '\\begin{array}{l} {\\small{' + text + '}} \\end{array}'  # This version of the line above is KaTeX friendly
+        result = []
+        # Step through each line with its index
+        for i, ln in enumerate(lines):
+            # Empty lines become blank cells
+            if not ln:
+                result.append('')
+            # The first line renders at normal position (no indent)
+            elif i == 0:
+                result.append('{\\small{' + ln + '}}')
+            # Continuation lines get a 2em indent so it's clear they belong to the line above
+            else:
+                result.append('\\hspace{2em}{\\small{' + ln + '}}')
+        # Return the list of formatted math lines
+        return result
