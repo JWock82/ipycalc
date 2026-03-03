@@ -209,6 +209,14 @@ def process_line(calc_line, local_ns):
     variable = variable.strip()
     value_format = value_format.strip()
 
+    # Determine if this is an expression-only line (no variable assignment).
+    # This occurs when there's no '=' sign and the text is not a simple variable name.
+    if equation == '':
+        test_var = variable.replace('(', '').replace(')', '').replace('{', '').replace('}', '').replace(',', '').replace(' ', '').replace('lambda', 'lamb').replace('^prime', '_prime')
+        is_expression_only = not test_var.isidentifier()
+    else:
+        is_expression_only = False
+
     # Format the equation to be Python friendly
     equation = equation.replace('^prime', '_prime')
     equation = equation.replace('^', '**')
@@ -316,14 +324,15 @@ def process_line(calc_line, local_ns):
         description = description.replace('&', r'\&')
         description = description + ': '
     
-    # Format the variable to be Python friendly
-    variable = variable.replace('(', '')
-    variable = variable.replace(')', '')
-    variable = variable.replace('{', '')  # Remove curly braces for valid Python variable names
-    variable = variable.replace('}', '')  # Remove curly braces for valid Python variable names
-    variable = variable.replace(',', '')  # Remove commas for valid Python variable names
-    variable = variable.replace(' ', '')
-    variable = variable.replace('lambda', 'lamb')  # lambda is a reserved word in python
+    # Format the variable to be Python friendly (skip for expression-only lines)
+    if not is_expression_only:
+        variable = variable.replace('(', '')
+        variable = variable.replace(')', '')
+        variable = variable.replace('{', '')  # Remove curly braces for valid Python variable names
+        variable = variable.replace('}', '')  # Remove curly braces for valid Python variable names
+        variable = variable.replace(',', '')  # Remove commas for valid Python variable names
+        variable = variable.replace(' ', '')
+        variable = variable.replace('lambda', 'lamb')  # lambda is a reserved word in python
 
     # Create a Latex version of the value
     latex_value = ''
@@ -353,11 +362,12 @@ def process_line(calc_line, local_ns):
     #     if not value.isnumeric():
     #         value = '\'' + value + '\''
     
-    # Add the variable and its value to this module's global namespace
-    exec('global ' + variable + '; ' + variable + '=' + value)
+    # Add the variable and its value to this module's global namespace (skip for expression-only lines)
+    if not is_expression_only:
+        exec('global ' + variable + '; ' + variable + '=' + value)
 
-    # Add the variable and its value to the IPython console's namespace
-    local_ns[variable] = eval(value)
+        # Add the variable and its value to the IPython console's namespace
+        local_ns[variable] = eval(value)
     
     # Add the equals sign between the variable and equation
     latex_variable = latex_variable + '='
