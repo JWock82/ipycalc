@@ -44,7 +44,7 @@ class ipycalcExporter(WebPDFExporter):
         self.exclude_output_prompt=True
 
         # Set the template directory for nbconvert to find custom templates
-        self.extra_template_basedirs = [self.template_dir]
+        self.extra_template_basedirs = [self.pkg_dir]
 
         # Set the template name to use
         self.template_name = self.custom_template_name
