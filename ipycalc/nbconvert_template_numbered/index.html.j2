@@ -3,51 +3,32 @@
 {% block notebook_css %}
 {{ super() }}
 {{ resources.include_css("./static/ipycalc.css") }}
-<style>
-/* Section numbering starting from h2 (h1 is reserved for titles) */
-.jp-Notebook {
-    counter-reset: heading2;
-}
+{% endblock %}
 
-.jp-Notebook h2 {
-    counter-reset: heading3;
-}
+{% block body_footer %}
+{{ super() }}
+<script>
+(function() {
+    var counters = [0, 0, 0, 0, 0];
+    var headings = document.querySelectorAll('.jp-Notebook h2, .jp-Notebook h3, .jp-Notebook h4, .jp-Notebook h5, .jp-Notebook h6');
 
-.jp-Notebook h3 {
-    counter-reset: heading4;
-}
+    headings.forEach(function(heading) {
+        var level = parseInt(heading.tagName.charAt(1)) - 2;
 
-.jp-Notebook h4 {
-    counter-reset: heading5;
-}
+        counters[level]++;
+        for (var i = level + 1; i < counters.length; i++) {
+            counters[i] = 0;
+        }
 
-.jp-Notebook h5 {
-    counter-reset: heading6;
-}
+        var number = '';
+        for (var i = 0; i <= level; i++) {
+            number += counters[i] + '.';
+        }
 
-.jp-Notebook h2::before {
-    counter-increment: heading2;
-    content: counter(heading2) ". ";
-}
-
-.jp-Notebook h3::before {
-    counter-increment: heading3;
-    content: counter(heading2) "." counter(heading3) ". ";
-}
-
-.jp-Notebook h4::before {
-    counter-increment: heading4;
-    content: counter(heading2) "." counter(heading3) "." counter(heading4) ". ";
-}
-
-.jp-Notebook h5::before {
-    counter-increment: heading5;
-    content: counter(heading2) "." counter(heading3) "." counter(heading4) "." counter(heading5) ". ";
-}
-
-.jp-Notebook h6::before {
-    counter-increment: heading6;
-    content: counter(heading2) "." counter(heading3) "." counter(heading4) "." counter(heading5) "." counter(heading6) ". ";
-}
-</style>
+        var span = document.createElement('span');
+        span.textContent = number + ' ';
+        heading.insertBefore(span, heading.firstChild);
+    });
+})();
+</script>
 {% endblock %}
