@@ -19,13 +19,7 @@
         zoom: 100%; /* Adjust this value if you want wider content to fit */
     }
 
-    /* Override any margins/padding from the lab template on all elements */
-    body * {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    /* Ensure notebook container elements have no margins or padding */
+    /* Ensure notebook container elements have no extra margins or padding */
     #notebook-container, .jp-Notebook, .jp-Cell {
         margin: 0 !important;
         padding: 0 !important;

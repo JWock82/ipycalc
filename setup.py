@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ipycalc",
-    version="0.0.85",
+    version="0.0.86",
     author="D. Craig Brinck, PE, SE",
     author_email="Building.Code@outlook.com",
     description="Clean looking engineering calculations for IPython",
@@ -26,6 +26,7 @@ setuptools.setup(
     entry_points={
         'nbconvert.exporters': [
             'ipycalc = ipycalc:ipycalcExporter',
+            'ipycalc_numbered = ipycalc:ipycalcNumberedExporter',
             ]
     }
 )

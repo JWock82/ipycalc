@@ -1,0 +1,6 @@
+{
+  "base_template": "nbconvert_template",
+  "mimetypes": {
+    "text/html": true
+  }
+}

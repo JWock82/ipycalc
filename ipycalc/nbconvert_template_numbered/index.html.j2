@@ -1,0 +1,53 @@
+{%- extends 'lab/index.html.j2' -%}
+
+{% block notebook_css %}
+{{ super() }}
+{{ resources.include_css("./static/ipycalc.css") }}
+<style>
+/* Section numbering starting from h2 (h1 is reserved for titles) */
+.jp-Notebook {
+    counter-reset: heading2;
+}
+
+.jp-Notebook h2 {
+    counter-reset: heading3;
+}
+
+.jp-Notebook h3 {
+    counter-reset: heading4;
+}
+
+.jp-Notebook h4 {
+    counter-reset: heading5;
+}
+
+.jp-Notebook h5 {
+    counter-reset: heading6;
+}
+
+.jp-Notebook h2::before {
+    counter-increment: heading2;
+    content: counter(heading2) ". ";
+}
+
+.jp-Notebook h3::before {
+    counter-increment: heading3;
+    content: counter(heading2) "." counter(heading3) ". ";
+}
+
+.jp-Notebook h4::before {
+    counter-increment: heading4;
+    content: counter(heading2) "." counter(heading3) "." counter(heading4) ". ";
+}
+
+.jp-Notebook h5::before {
+    counter-increment: heading5;
+    content: counter(heading2) "." counter(heading3) "." counter(heading4) "." counter(heading5) ". ";
+}
+
+.jp-Notebook h6::before {
+    counter-increment: heading6;
+    content: counter(heading2) "." counter(heading3) "." counter(heading4) "." counter(heading5) "." counter(heading6) ". ";
+}
+</style>
+{% endblock %}

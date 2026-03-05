@@ -47,3 +47,17 @@ class ipycalcExporter(WebPDFExporter):
         self.embed_images=True
         self.exclude_input_prompt=True
         self.exclude_output_prompt=True
+
+
+class ipycalcNumberedExporter(ipycalcExporter):
+    """
+    A custom PDF exporter for ipycalc with section numbering.
+
+    Same as ipycalcExporter but adds automatic section numbers to headings
+    (h2 and below). h1 headings are treated as titles and are not numbered.
+
+    This exporter is registered as an entry point so it can be selected in
+    JupyterLab via "File -> Save and Export Notebook As... -> Ipycalc (Numbered)"
+    """
+
+    custom_template_name = 'nbconvert_template_numbered'
