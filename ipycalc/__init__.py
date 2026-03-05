@@ -32,6 +32,11 @@ class ipycalcExporter(WebPDFExporter):
 
     def __init__(self, config=None, **kw):
 
+        # Set template config before parent init so the template environment
+        # is built with the correct paths from the start
+        kw.setdefault('extra_template_basedirs', [self.pkg_dir])
+        kw.setdefault('template_name', self.custom_template_name)
+
         super().__init__(config=config, **kw)
 
         # Set up preprocessors
@@ -42,9 +47,3 @@ class ipycalcExporter(WebPDFExporter):
         self.embed_images=True
         self.exclude_input_prompt=True
         self.exclude_output_prompt=True
-
-        # Set the template directory for nbconvert to find custom templates
-        self.extra_template_basedirs = [self.pkg_dir]
-
-        # Set the template name to use
-        self.template_name = self.custom_template_name
