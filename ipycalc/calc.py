@@ -391,6 +391,38 @@ def process_line(calc_line, local_ns):
     # Get the list of formatted lines for the reference column (right column)
     ref = linebreaks(reference, 'text')
 
+    def compact_multiline_text_cell(raw_text):
+        # Split on user-entered "\\" markers so each authored continuation line is preserved.
+        # Example: "Line A\\Line B" -> ["Line A", "Line B"]
+        text_lines = raw_text.split('\\\\')
+
+        # Build each rendered line explicitly so blank lines can be handled safely.
+        compact_lines = []
+        for ln in text_lines:
+            if ln:
+                # Keep text columns in sans-serif to match existing description/reference styling.
+                compact_lines.append('\\textsf{' + ln + '}')
+            else:
+                # Use a non-breaking placeholder so intentionally blank lines still occupy
+                # vertical space in the nested array instead of collapsing.
+                compact_lines.append('\\textsf{~}')
+
+        # Render all continuation lines inside one nested array cell.
+        # This avoids forcing continuation text onto additional parent rows, which is what
+        # previously created large visual gaps when the equation column had tall content.
+        #
+        # `\\hspace{-0.5em}` and `\\hspace{-0.6em}` trim nested-array side padding so
+        # multiline description/reference blocks visually align with single-line rows.
+        return '{\\small{\\hspace{-0.5em}\\begin{array}{l}' + '\\\\'.join(compact_lines) + '\\end{array}\\hspace{-0.6em}}}'
+
+    # If description spans multiple authored lines, collapse those lines into a single compact
+    # cell entry. The compact cell still occupies row 1, so top-justification is preserved.
+    if len(desc) > 1:
+        desc = [compact_multiline_text_cell(description)]
+    # Apply the same compact-cell rule to multiline references for consistent behavior.
+    if len(ref) > 1:
+        ref = [compact_multiline_text_cell(reference)]
+
     # Determine how many parent rows we need (driven by the column with the most lines)
     n = max(len(desc), len(eq), len(ref))
     # Initialize the output string that will hold all the rows for this calc line
