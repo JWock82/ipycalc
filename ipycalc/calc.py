@@ -1,10 +1,12 @@
 import os
 import re
+import json
 
 from math import pi, sqrt, sin, cos, asin, acos, atan, tan, sinh, cosh, tanh, log, log10
 
 from IPython.core.magic import (register_cell_magic, needs_local_scope)
 from IPython.display import display, Latex, HTML, Markdown
+from IPython import get_ipython
 
 # Use pint for units
 import pint
@@ -172,8 +174,9 @@ def sync_namespaces(local_ns):
     local_ns['percent'] = ureg.percent
     local_ns['pct'] = ureg.pct
 
-    # Provide the IPython console with access to the `funit` method
-    local_ns['funit'] = funit
+    # Provide the IPython console with access to save_vars and import_vars
+    local_ns['save_vars'] = save_vars
+    local_ns['import_vars'] = import_vars
 
 #%%
 def process_line(calc_line, local_ns):
@@ -858,3 +861,271 @@ def linebreaks(text, format='text'):
                 result.append('\\hspace{2em}{\\small{' + ln + '}}')
         # Return the list of formatted math lines
         return result
+
+#%%
+def _resolve_notebook_path(notebook_name):
+    """
+    Resolve a notebook filename against the current working directory.
+
+    Users pass only a filename like "beam.ipynb". This keeps behavior
+    deterministic and avoids brittle notebook path auto-detection.
+    """
+    if not isinstance(notebook_name, str) or notebook_name.strip() == '':
+        raise ValueError('notebook_name must be a non-empty string like "beam.ipynb"')
+
+    normalized_name = notebook_name.strip()
+    if os.path.basename(normalized_name) != normalized_name:
+        raise ValueError('Use filename only (no path), e.g. "beam.ipynb"')
+
+    cwd = os.getcwd()
+    notebook_path = os.path.abspath(os.path.join(cwd, normalized_name))
+    return notebook_path, cwd
+
+#%%
+def _serialize_var(value):
+    """
+    Serialize a Python variable to a JSON-safe dict.
+    
+    Supported types:
+    - int, float, str, bool, None → JSON native
+    - pint.Quantity → {"__type__": "pint", "magnitude": float, "unit": str}
+    - list, tuple → JSON array (tuple wrapped in {"__type__": "tuple", "items": [...]})
+    - Anything else (functions, classes, numpy arrays) → returns None (will be skipped)
+    
+    Returns the serialized value, or None if it cannot be serialized.
+    """
+    # JSON native types
+    if value is None or isinstance(value, (bool, int, float, str)):
+        return value
+    
+    # pint.Quantity
+    if isinstance(value, ureg.Quantity):
+        return {
+            "__type__": "pint",
+            "magnitude": float(value.magnitude),
+            "unit": str(value.units)
+        }
+    
+    # Tuple: wrap in a tagged dict
+    if isinstance(value, tuple):
+        items = []
+        for item in value:
+            serialized = _serialize_var(item)
+            if serialized is None and item is not None:
+                return None  # Can't serialize tuple with non-serializable items
+            items.append(serialized)
+        return {
+            "__type__": "tuple",
+            "items": items
+        }
+    
+    # List: recursively serialize items
+    if isinstance(value, list):
+        items = []
+        for item in value:
+            serialized = _serialize_var(item)
+            if serialized is None and item is not None:
+                return None  # Can't serialize list with non-serializable items
+            items.append(serialized)
+        return items
+    
+    # Everything else (functions, classes, numpy arrays, etc.) is not serializable
+    return None
+
+#%%
+def _deserialize_var(data):
+    """
+    Deserialize a JSON dict back to a Python variable.
+    
+    Handles the reverse of _serialize_var, reconstructing pint.Quantity objects
+    using the module's ureg unit registry.
+    
+    Returns the deserialized value.
+    """
+    # JSON native types or None
+    if data is None or isinstance(data, (bool, int, float, str)):
+        return data
+    
+    # Tagged pint.Quantity
+    if isinstance(data, dict) and data.get("__type__") == "pint":
+        magnitude = data["magnitude"]
+        unit_str = data["unit"]
+        return ureg.Quantity(magnitude, unit_str)
+    
+    # Tagged tuple
+    if isinstance(data, dict) and data.get("__type__") == "tuple":
+        items = []
+        for item in data["items"]:
+            items.append(_deserialize_var(item))
+        return tuple(items)
+    
+    # Plain list: recursively deserialize items
+    if isinstance(data, list):
+        items = []
+        for item in data:
+            items.append(_deserialize_var(item))
+        return items
+    
+    # Fallback: return as-is
+    return data
+
+#%%
+def save_vars(notebook_name):
+    """
+    Save all user-defined variables to a sidecar JSON file.
+
+    Variables are written to .ipycalc_vars/<stem>.json in the same directory
+    as the notebook. Each call completely replaces any prior saved variables
+    (no merging). The notebook file itself is never modified.
+
+    notebook_name must be a filename in the current working directory.
+
+    Skips:
+    - Names starting with underscore
+    - Unit shortcuts (from unit_list)
+    - ipycalc internals (ureg, funit, save_vars, import_vars, etc.)
+    - Non-data types (functions, classes, modules, types)
+    """
+    try:
+        notebook_path, _ = _resolve_notebook_path(notebook_name)
+
+        # Confirm the target notebook exists so typos don't create orphan sidecar files.
+        if not os.path.exists(notebook_path):
+            raise ValueError(f"Notebook not found: {notebook_path}")
+
+        # Get the IPython user namespace
+        ip = get_ipython()
+        user_ns = ip.user_ns
+
+        # Build the list of variables to skip
+        skip_list = set(unit_list + [
+            'ureg', 'funit', 'save_vars', 'import_vars',
+            'In', 'Out', 'exit', 'quit', 'get_ipython',
+            '_', '__', '___', '_i', '_ii', '_iii',
+            '_oh', '_sh', '_dh', 'exit', 'quit'
+        ])
+
+        # Serialize each variable
+        ipycalc_vars = {}
+        for var_name, var_value in user_ns.items():
+            # Skip if name starts with underscore
+            if var_name.startswith('_'):
+                continue
+            
+            # Skip if in skip list
+            if var_name in skip_list:
+                continue
+
+            # Skip functions, classes, modules, types, etc.
+            if callable(var_value) or hasattr(var_value, '__module__'):
+                if not isinstance(var_value, (int, float, str, bool, type(None), ureg.Quantity)):
+                    continue
+
+            # Try to serialize the variable
+            serialized = _serialize_var(var_value)
+            if serialized is not None or var_value is None:
+                ipycalc_vars[var_name] = serialized
+
+        # Resolve sidecar path: .ipycalc_vars/<stem>.json
+        notebook_dir = os.path.dirname(notebook_path)
+        stem = os.path.splitext(os.path.basename(notebook_path))[0]
+        vars_dir = os.path.join(notebook_dir, '.ipycalc_vars')
+        os.makedirs(vars_dir, exist_ok=True)
+        vars_path = os.path.join(vars_dir, stem + '.json')
+
+        # Write variables to sidecar file (completely overwrite, no merging)
+        with open(vars_path, 'w', encoding='utf-8') as f:
+            json.dump(ipycalc_vars, f, indent=2)
+
+        print(f"Saved {len(ipycalc_vars)} variable(s) to {vars_path}")
+
+    except ValueError as e:
+        print(f"Error saving variables: {str(e)}")
+    except Exception as e:
+        print(f"Error saving variables: {str(e)}")
+
+#%%
+def import_vars(notebook_name, *var_names):
+    """
+    Import variables from another notebook in the current working directory.
+    
+    Reads the sidecar file .ipycalc_vars/<stem>.json associated with the
+    specified notebook and injects those variables into the current IPython
+    namespace.
+    
+    Parameters:
+    -----------
+    notebook_name : str
+        The filename of the notebook to import from (e.g., 'beam.ipynb').
+        Must be in the current working directory.
+    
+    *var_names : str (optional)
+        Variable names to import. If provided, only these variables are imported.
+        If not provided, all saved variables are imported.
+    
+    Raises ValueError if the notebook is not found or has no saved variables.
+    Prints warnings for any variables that already exist in the current namespace.
+    """
+    try:
+        source_path, _ = _resolve_notebook_path(notebook_name)
+
+        # Confirm source notebook exists before attempting sidecar import.
+        if not os.path.exists(source_path):
+            raise ValueError(f"Notebook not found: {source_path}")
+
+        # Resolve sidecar path: .ipycalc_vars/<stem>.json
+        notebook_dir = os.path.dirname(source_path)
+        stem = os.path.splitext(os.path.basename(source_path))[0]
+        vars_path = os.path.join(notebook_dir, '.ipycalc_vars', stem + '.json')
+
+        if not os.path.exists(vars_path):
+            raise ValueError(
+                f"No saved variables found for {notebook_name} "
+                f"(expected {vars_path})"
+            )
+
+        # Read the sidecar JSON
+        with open(vars_path, 'r', encoding='utf-8') as f:
+            ipycalc_vars = json.load(f)
+
+        if not ipycalc_vars:
+            raise ValueError(f"No saved variables found in {notebook_name}")
+        
+        # Get the IPython namespace
+        ip = get_ipython()
+        user_ns = ip.user_ns
+        
+        # Filter variables if var_names were specified
+        if var_names:
+            filtered_vars = {}
+            for var_name in var_names:
+                if var_name in ipycalc_vars:
+                    filtered_vars[var_name] = ipycalc_vars[var_name]
+                else:
+                    print(f"Warning: Variable '{var_name}' not found in {notebook_name}")
+            ipycalc_vars = filtered_vars
+        
+        # Deserialize and inject each variable
+        imported_count = 0
+        for var_name, var_data in ipycalc_vars.items():
+            # Check if variable already exists and warn
+            if var_name in user_ns:
+                print(f"Warning: Variable '{var_name}' already exists. Overwriting.")
+            
+            # Deserialize the variable
+            var_value = _deserialize_var(var_data)
+            
+            # Inject into IPython namespace
+            user_ns[var_name] = var_value
+            
+            # Also add to module globals for consistency
+            globals()[var_name] = var_value
+            
+            imported_count += 1
+        
+        print(f"Imported {imported_count} variable(s) from {notebook_name}")
+        
+    except ValueError as e:
+        print(f"Error importing variables: {str(e)}")
+    except Exception as e:
+        print(f"Unexpected error importing variables: {str(e)}")

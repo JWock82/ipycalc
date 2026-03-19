@@ -1,6 +1,8 @@
 import os
 from nbconvert.exporters import WebPDFExporter
 from nbconvert.preprocessors import TagRemovePreprocessor
+from .calc import save_vars, import_vars
+
 
 class ipycalcExporter(WebPDFExporter):
     """
