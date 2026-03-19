@@ -34,4 +34,29 @@ Here are a few useful things to keep in mind when using `ipycalc`:
 * If text gets to lengthy to fit on one line, you can add `\\` to force a line break anywhere in a line. This can help your calculations fit within the page's print margins.
 * `ipycalc` assists you with printing your notebooks. It has a built in `nbconvert` template called `ipycalc` that works just like the `webpdf` template, except it fixes the the bad margins in the `webpdf` template, and avoids page breaks right after headers. Any cells tagged with `hide_cell` will not be rendered. Any cells tagged with `hide_input` will only show the output upon printing. You can select it from the file menu via "File -> Save and Export Notebook As... -> Ipycalc"
 
+## Sharing Variables Between Notebooks
+
+`ipycalc` can save variables from one notebook and import them into another. This is useful when a project spans multiple notebooks (e.g. a loads notebook feeding into a beam design notebook).
+
+**Saving variables:**
+
+```python
+from ipycalc import save_vars
+save_vars('my_notebook.ipynb')
+```
+
+This writes all user-defined variables — including `pint` quantities with units — to a sidecar file at `.ipycalc_vars/my_notebook.json` in the same directory as the notebook. The notebook file itself is never modified.
+
+**Importing variables:**
+
+```python
+from ipycalc import import_vars
+import_vars('my_notebook.ipynb')           # import all saved variables
+import_vars('my_notebook.ipynb', 'P', 'L') # import specific variables only
+```
+
+Both functions are also available directly inside a `%%calc` cell without any import statement.
+
+Variables are saved and loaded by filename only. Both notebooks must be in the same working directory.
+
 IPycalc is still in development. There could be bugs, so be cautious and validate the answers it gives you. A special thanks to @connorferster for his project `handcalcs` which inspired this project. A link to `handcalcs` is here: https://github.com/connorferster/handcalcs.
