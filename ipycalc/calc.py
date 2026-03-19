@@ -178,9 +178,6 @@ def sync_namespaces(local_ns):
     local_ns['save_vars'] = save_vars
     local_ns['import_vars'] = import_vars
 
-    # Provide the IPython console with access to the `funit` method
-    local_ns['funit'] = funit
-
 #%%
 def process_line(calc_line, local_ns):
 
@@ -866,70 +863,23 @@ def linebreaks(text, format='text'):
         return result
 
 #%%
-def _get_notebook_path():
+def _resolve_notebook_path(notebook_name):
     """
-    Auto-detect the path to the calling notebook.
-    
-    Attempts multiple strategies to find the notebook:
-    1. Query the Jupyter API using kernel session info
-    2. Check the kernel's comm message metadata
-    3. Fall back to checking common locations
-    
-    Returns a tuple of (directory, filename).
-    Raises ValueError if all strategies fail.
+    Resolve a notebook filename against the current working directory.
+
+    Users pass only a filename like "beam.ipynb". This keeps behavior
+    deterministic and avoids brittle notebook path auto-detection.
     """
-    try:
-        import requests
-        from notebook.notebookapp import list_running_servers
-        import json as json_module
-        
-        # Strategy 1: Try to match via kernel/session API
-        try:
-            servers = list_running_servers()
-            for server in servers:
-                try:
-                    # Query the sessions API
-                    response = requests.get(
-                        f'{server["url"]}api/sessions',
-                        timeout=2
-                    )
-                    if response.status_code == 200:
-                        sessions = response.json()
-                        # Return the first notebook (assumes single notebook per session)
-                        if sessions and len(sessions) > 0:
-                            notebook_path = sessions[0]['notebook']['path']
-                            server_root = server.get('notebook_dir', '')
-                            full_path = os.path.join(server_root, notebook_path)
-                            directory = os.path.dirname(full_path)
-                            filename = os.path.basename(full_path)
-                            return (directory, filename)
-                except Exception:
-                    continue
-        except Exception:
-            pass
-        
-        # Strategy 2: Check kernel metadata from IPython
-        try:
-            ip = get_ipython()
-            # Some IPython kernels store the notebook path in kernel metadata
-            if hasattr(ip, 'kernel') and hasattr(ip.kernel, 'info_reply'):
-                info = ip.kernel.info_reply.get('metadata', {})
-                if 'notebook' in info:
-                    notebook_path = info['notebook']['path']
-                    directory = os.path.dirname(notebook_path)
-                    filename = os.path.basename(notebook_path)
-                    return (directory, filename)
-        except Exception:
-            pass
-        
-        raise ValueError("Could not detect notebook via API or kernel metadata")
-        
-    except Exception as e:
-        raise ValueError(
-            f"Could not detect notebook path: {str(e)}. "
-            "Please ensure you are running in a Jupyter notebook "
-            "and the notebook and kernel servers are running."
-        )
+    if not isinstance(notebook_name, str) or notebook_name.strip() == '':
+        raise ValueError('notebook_name must be a non-empty string like "beam.ipynb"')
+
+    normalized_name = notebook_name.strip()
+    if os.path.basename(normalized_name) != normalized_name:
+        raise ValueError('Use filename only (no path), e.g. "beam.ipynb"')
+
+    cwd = os.getcwd()
+    notebook_path = os.path.abspath(os.path.join(cwd, normalized_name))
+    return notebook_path, cwd
 
 #%%
 def _serialize_var(value):
@@ -1020,16 +970,16 @@ def _deserialize_var(data):
     return data
 
 #%%
-def save_vars():
+def save_vars(notebook_name):
     """
-    Save all user-defined variables to the current notebook's metadata.
-    
-    Serializes variables from IPython's namespace into the calling notebook's
-    .ipynb file under metadata["ipycalc_vars"]. Each call completely replaces
-    any prior saved variables (no merging).
-    
-    Auto-detects the calling notebook using Jupyter kernel connection info.
-    
+    Save all user-defined variables to a sidecar JSON file.
+
+    Variables are written to .ipycalc_vars/<stem>.json in the same directory
+    as the notebook. Each call completely replaces any prior saved variables
+    (no merging). The notebook file itself is never modified.
+
+    notebook_name must be a filename in the current working directory.
+
     Skips:
     - Names starting with underscore
     - Unit shortcuts (from unit_list)
@@ -1037,14 +987,16 @@ def save_vars():
     - Non-data types (functions, classes, modules, types)
     """
     try:
-        # Get the notebook path
-        notebook_dir, notebook_name = _get_notebook_path()
-        notebook_path = os.path.join(notebook_dir, notebook_name)
-        
+        notebook_path, _ = _resolve_notebook_path(notebook_name)
+
+        # Confirm the target notebook exists so typos don't create orphan sidecar files.
+        if not os.path.exists(notebook_path):
+            raise ValueError(f"Notebook not found: {notebook_path}")
+
         # Get the IPython user namespace
         ip = get_ipython()
         user_ns = ip.user_ns
-        
+
         # Build the list of variables to skip
         skip_list = set(unit_list + [
             'ureg', 'funit', 'save_vars', 'import_vars',
@@ -1052,7 +1004,7 @@ def save_vars():
             '_', '__', '___', '_i', '_ii', '_iii',
             '_oh', '_sh', '_dh', 'exit', 'quit'
         ])
-        
+
         # Serialize each variable
         ipycalc_vars = {}
         for var_name, var_value in user_ns.items():
@@ -1063,53 +1015,49 @@ def save_vars():
             # Skip if in skip list
             if var_name in skip_list:
                 continue
-            
+
             # Skip functions, classes, modules, types, etc.
             if callable(var_value) or hasattr(var_value, '__module__'):
                 if not isinstance(var_value, (int, float, str, bool, type(None), ureg.Quantity)):
-                    if isinstance(var_value, ureg.Quantity):
-                        pass  # pint.Quantity is okay
-                    else:
-                        continue
-            
+                    continue
+
             # Try to serialize the variable
             serialized = _serialize_var(var_value)
             if serialized is not None or var_value is None:
                 ipycalc_vars[var_name] = serialized
-        
-        # Read the notebook JSON
-        with open(notebook_path, 'r', encoding='utf-8') as f:
-            nb = json.load(f)
-        
-        # Ensure metadata exists
-        if 'metadata' not in nb:
-            nb['metadata'] = {}
-        
-        # Replace ipycalc_vars (completely overwrite, no merging)
-        nb['metadata']['ipycalc_vars'] = ipycalc_vars
-        
-        # Write back to disk
-        with open(notebook_path, 'w', encoding='utf-8') as f:
-            json.dump(nb, f, indent=1)
-        
-        print(f"Saved {len(ipycalc_vars)} variable(s) to notebook metadata")
-        
+
+        # Resolve sidecar path: .ipycalc_vars/<stem>.json
+        notebook_dir = os.path.dirname(notebook_path)
+        stem = os.path.splitext(os.path.basename(notebook_path))[0]
+        vars_dir = os.path.join(notebook_dir, '.ipycalc_vars')
+        os.makedirs(vars_dir, exist_ok=True)
+        vars_path = os.path.join(vars_dir, stem + '.json')
+
+        # Write variables to sidecar file (completely overwrite, no merging)
+        with open(vars_path, 'w', encoding='utf-8') as f:
+            json.dump(ipycalc_vars, f, indent=2)
+
+        print(f"Saved {len(ipycalc_vars)} variable(s) to {vars_path}")
+
+    except ValueError as e:
+        print(f"Error saving variables: {str(e)}")
     except Exception as e:
         print(f"Error saving variables: {str(e)}")
 
 #%%
 def import_vars(notebook_name, *var_names):
     """
-    Import variables from another notebook in the same directory.
+    Import variables from another notebook in the current working directory.
     
-    Reads the ipycalc_vars metadata from the specified notebook file and
-    injects those variables into the current IPython namespace.
+    Reads the sidecar file .ipycalc_vars/<stem>.json associated with the
+    specified notebook and injects those variables into the current IPython
+    namespace.
     
     Parameters:
     -----------
     notebook_name : str
         The filename of the notebook to import from (e.g., 'beam.ipynb').
-        Must be in the same directory as the current notebook.
+        Must be in the current working directory.
     
     *var_names : str (optional)
         Variable names to import. If provided, only these variables are imported.
@@ -1119,20 +1067,27 @@ def import_vars(notebook_name, *var_names):
     Prints warnings for any variables that already exist in the current namespace.
     """
     try:
-        # Get the current notebook directory
-        notebook_dir, _ = _get_notebook_path()
-        source_path = os.path.join(notebook_dir, notebook_name)
-        
-        # Check if source notebook exists
+        source_path, _ = _resolve_notebook_path(notebook_name)
+
+        # Confirm source notebook exists before attempting sidecar import.
         if not os.path.exists(source_path):
             raise ValueError(f"Notebook not found: {source_path}")
-        
-        # Read the source notebook JSON
-        with open(source_path, 'r', encoding='utf-8') as f:
-            source_nb = json.load(f)
-        
-        # Get ipycalc_vars from metadata
-        ipycalc_vars = source_nb.get('metadata', {}).get('ipycalc_vars', {})
+
+        # Resolve sidecar path: .ipycalc_vars/<stem>.json
+        notebook_dir = os.path.dirname(source_path)
+        stem = os.path.splitext(os.path.basename(source_path))[0]
+        vars_path = os.path.join(notebook_dir, '.ipycalc_vars', stem + '.json')
+
+        if not os.path.exists(vars_path):
+            raise ValueError(
+                f"No saved variables found for {notebook_name} "
+                f"(expected {vars_path})"
+            )
+
+        # Read the sidecar JSON
+        with open(vars_path, 'r', encoding='utf-8') as f:
+            ipycalc_vars = json.load(f)
+
         if not ipycalc_vars:
             raise ValueError(f"No saved variables found in {notebook_name}")
         

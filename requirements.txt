@@ -1,5 +1,3 @@
 IPython
 pint
 jupyterlab-mathjax3
-notebook
-requests
