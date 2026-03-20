@@ -65,7 +65,7 @@ Example (flexural strength of a concrete beam):
 	- `hide_input` prints output only.
 - In Jupyter, export with:
 	- `File -> Save and Export Notebook As... -> Ipycalc`
-	- `File -> Save and Export Notebook As... -> Ipycalc (Numbered)`
+	- `File -> Save and Export Notebook As... -> Ipycalc_numbered`
 - From the command line, you can also export with `jupyter nbconvert --to ipycalc` or `jupyter nbconvert --to ipycalc_numbered`.
 
 ## Sharing Variables Between Notebooks
