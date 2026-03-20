@@ -1,7 +1,26 @@
 import os
-from nbconvert.exporters import WebPDFExporter
-from nbconvert.preprocessors import TagRemovePreprocessor
-from .calc import save_vars, import_vars
+
+try:
+    from nbconvert.exporters import WebPDFExporter
+    from nbconvert.preprocessors import TagRemovePreprocessor
+except ImportError:
+    WebPDFExporter = object
+    TagRemovePreprocessor = None
+
+
+def calc(*args, **kwargs):
+    from .calc import calc as _calc
+    return _calc(*args, **kwargs)
+
+
+def import_vars(notebook_name, *var_names):
+    from .calc import import_vars as _import_vars
+    return _import_vars(notebook_name, *var_names)
+
+
+def save_vars(notebook_name):
+    from .calc import save_vars as _save_vars
+    return _save_vars(notebook_name)
 
 
 class ipycalcExporter(WebPDFExporter):
@@ -33,6 +52,8 @@ class ipycalcExporter(WebPDFExporter):
     template_dir = os.path.join(pkg_dir, custom_template_name)
 
     def __init__(self, config=None, **kw):
+        if TagRemovePreprocessor is None:
+            raise ImportError("nbconvert is required for ipycalc exporters.")
 
         # Set template config before parent init so the template environment
         # is built with the correct paths from the start
@@ -43,12 +64,12 @@ class ipycalcExporter(WebPDFExporter):
 
         # Set up preprocessors
         trp = TagRemovePreprocessor()
-        trp.remove_cell_tags=['hide_cell']
-        trp.remove_input_tags=['hide_input']
+        trp.remove_cell_tags = ['hide_cell']
+        trp.remove_input_tags = ['hide_input']
         self.register_preprocessor(trp, enabled=True)
-        self.embed_images=True
-        self.exclude_input_prompt=True
-        self.exclude_output_prompt=True
+        self.embed_images = True
+        self.exclude_input_prompt = True
+        self.exclude_output_prompt = True
 
 
 class ipycalcNumberedExporter(ipycalcExporter):

@@ -414,9 +414,9 @@ def process_line(calc_line, local_ns):
         # This avoids forcing continuation text onto additional parent rows, which is what
         # previously created large visual gaps when the equation column had tall content.
         #
-        # `\\hspace{-0.5em}` and `\\hspace{-0.6em}` trim nested-array side padding so
-        # multiline description/reference blocks visually align with single-line rows.
-        return '{\\small{\\hspace{-0.5em}\\begin{array}{l}' + '\\\\'.join(compact_lines) + '\\end{array}\\hspace{-0.6em}}}'
+        # `\\hspace{-0.5em}` trims nested-array side padding so multiline description/reference
+        # blocks visually align with single-line rows.
+        return '{\\small{\\hspace{-0.5em}\\begin{array}{l}' + '\\\\'.join(compact_lines) + '\\end{array}\\hspace{-0.5em}}}'
 
     # If description spans multiple authored lines, collapse those lines into a single compact
     # cell entry. The compact cell still occupies row 1, so top-justification is preserved.

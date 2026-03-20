@@ -1,3 +1,4 @@
 IPython
 pint
 jupyterlab-mathjax3
+nbconvert>=6.0
