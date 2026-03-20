@@ -1,53 +1,87 @@
 # ipycalc
-Simple Engineering Calculations in Jupyter
+Engineering calculations in Jupyter, formatted for clear review and professional reports.
 
-Turn the contents of a Jupyter cell into a formatted calculation by following the steps below:
+`ipycalc` helps engineers move from raw notebook math to readable, auditable calculations. Write equations in Python, add descriptions and references, and get polished output that is easier to check, share, and print.
 
-1. Install `ipycalc` using `pip install ipycalc`
-2. Use `from ipycalc import calc` to bring `ipycalc` into your notebook's namespace.
-3. Use `%%calc` as the first line of a cell to indicate that you want to run `ipycalc` on the contents of a cell.
+## Why Use ipycalc?
 
-The basic calculation syntax is:
+- Turn opaque code cells into presentation-ready engineering calculations.
+- Keep the speed and flexibility of Python while improving readability.
+- Add units, references, and notation in one place.
+- Export cleaner PDFs with the built-in `nbconvert` template.
+- Reuse project variables across notebooks without manual copy/paste.
 
-Variable Description: `variable_name` = `python_expression` -> `result_decimal_places`*`result_unit` # Reference Text
+If you already use Jupyter for design work, `ipycalc` helps close the gap between computation and documentation.
 
-Here's a simple example that calculates the flexural strength of a concrete beam:
+## Quick Start
+
+1. Install:
+
+```bash
+pip install ipycalc
+```
+
+2. Import in your notebook:
+
+```python
+from ipycalc import calc
+```
+
+3. Start a calc cell with `%%calc`.
+
+## Basic Syntax
+
+```text
+Variable Description: variable_name = python_expression -> result_decimal_places*result_unit # Reference Text
+```
+
+Example (flexural strength of a concrete beam):
 
 ![Example](/Example.png)
 
-Key components of the `ipycalc` syntax are:
+## Syntax Reference
 
-* `:` (required) The description must come before this character.
-* `=` (optional) Used to assign a python expression to a variable name. Omit this if you simply want to reprint a previously defined variable.
-* `->` (optional) Separates the python expression from the results formatting rules.
-* `*` (optional) Indicate the number of decimals you want to see in the result to the left of the `*`, and the units you want to see in the result to the right.
-* `#` (optional) Indicates reference text to the side of the calculation - handy for equation references or code references.
+- `:` (required) Description appears before this character.
+- `=` (optional) Assign a Python expression to a variable. Omit to reprint a previously defined variable.
+- `->` (optional) Separates the expression from result formatting rules.
+- `*` (optional) Set decimal places to the left and result units to the right.
+- `#` (optional) Add right-side reference text (equation references, code references, notes).
 
-Here are a few useful things to keep in mind when using `ipycalc`:
+## Useful Notes
 
-* Subscripts can be added by using the `_` character to indicate the start of a subscript.
-* Greek characters included in the `python_expression` can just be written out (e.g. `epsilon`). To include greek characters in the Variable Description or the Reference Text, you can use Jupyter's Markdown Latex tags (e.g. `$\epsilon$`). Note that the greek character `psi` is ambiguous with the unit psi (pounds per square inch), so for that character specifically you'll need to use `\grpsi` to tell `ipycalc` you want the greek character rather than the unit.
-* To stack fractions place the numerator and denominater in parentheses: (num)/(denom) yields $\dfrac{num}{denom}$.
-* `if` statements and `else` statements are available using python's inline `if` statement (terniary) notation.
-* Square roots can be displayed using `sqrt`.
-* Prime characters can be displayed using `^prime`.
-* If text gets to lengthy to fit on one line, you can add `\\` to force a line break anywhere in a line. This can help your calculations fit within the page's print margins.
-* `ipycalc` assists you with printing your notebooks. It has a built in `nbconvert` template called `ipycalc` that works just like the `webpdf` template, except it fixes the the bad margins in the `webpdf` template, and avoids page breaks right after headers. Any cells tagged with `hide_cell` will not be rendered. Any cells tagged with `hide_input` will only show the output upon printing. You can select it from the file menu via "File -> Save and Export Notebook As... -> Ipycalc"
+- Subscripts: use `_` to indicate the start of a subscript.
+- Greek in expressions: write names directly (for example `epsilon`).
+- Greek in descriptions/reference text: use Jupyter Markdown LaTeX (for example `$\epsilon$`).
+- `psi` is ambiguous with pressure units; use `\grpsi` when you need the Greek character.
+- Stacked fractions: wrap numerator and denominator in parentheses, for example `(num)/(denom)` renders as $\dfrac{num}{denom}$.
+- Conditionals: use Python inline ternary notation.
+- Square roots: use `sqrt`.
+- Prime notation: use `^prime`.
+- Manual line breaks: insert `\\` where needed to avoid overflow in print layouts.
+- Printing: `ipycalc` includes an `nbconvert` template named `ipycalc` that behaves like `webpdf`, but with improved margins and better page-break behavior after headers.
+- Numbered/sectioned printing: use the `ipycalc_numbered` exporter to automatically number section headers (`h2` and below). This is useful for formal calculation packages where references to section numbers are required.
+- Print tags:
+	- `hide_cell` excludes the entire cell.
+	- `hide_input` prints output only.
+- In Jupyter, export with:
+	- `File -> Save and Export Notebook As... -> Ipycalc`
+	- `File -> Save and Export Notebook As... -> Ipycalc (Numbered)`
+- From the command line, you can also export with `jupyter nbconvert --to ipycalc` or `jupyter nbconvert --to ipycalc_numbered`.
 
 ## Sharing Variables Between Notebooks
 
-`ipycalc` can save variables from one notebook and import them into another. This is useful when a project spans multiple notebooks (e.g. a loads notebook feeding into a beam design notebook).
+`ipycalc` can save variables from one notebook and import them into another. This is useful for multi-notebook workflows, such as loads feeding into member design.
 
-**Saving variables:**
+Saving variables:
 
 ```python
 from ipycalc import save_vars
 save_vars('my_notebook.ipynb')
 ```
 
-This writes all user-defined variables — including `pint` quantities with units — to a sidecar file at `.ipycalc_vars/my_notebook.json` in the same directory as the notebook. The notebook file itself is never modified.
+This writes user-defined variables (including `pint` quantities with units) to `.ipycalc_vars/my_notebook.json` in the notebook's directory. The notebook file itself is never modified.
 
-**Importing variables:**
+Importing variables:
 
 ```python
 from ipycalc import import_vars
@@ -55,8 +89,13 @@ import_vars('my_notebook.ipynb')           # import all saved variables
 import_vars('my_notebook.ipynb', 'P', 'L') # import specific variables only
 ```
 
-Both functions are also available directly inside a `%%calc` cell without any import statement.
+Both functions are also available directly inside a `%%calc` cell with no import statement required.
 
 Variables are saved and loaded by filename only. Both notebooks must be in the same working directory.
 
-IPycalc is still in development. There could be bugs, so be cautious and validate the answers it gives you. A special thanks to @connorferster for his project `handcalcs` which inspired this project. A link to `handcalcs` is here: https://github.com/connorferster/handcalcs.
+## Project Status
+
+`ipycalc` is actively evolving. Validate results as part of your normal engineering QA process.
+
+Special thanks to @connorferster and the `handcalcs` project for inspiration:
+https://github.com/connorferster/handcalcs
