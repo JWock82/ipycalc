@@ -7,12 +7,6 @@ except ImportError:
     WebPDFExporter = object
     TagRemovePreprocessor = None
 
-
-def calc(*args, **kwargs):
-    from .calc import calc as _calc
-    return _calc(*args, **kwargs)
-
-
 def import_vars(notebook_name, *var_names):
     from .calc import import_vars as _import_vars
     return _import_vars(notebook_name, *var_names)
