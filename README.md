@@ -60,7 +60,7 @@ Example (flexural strength of a concrete beam):
 - Manual line breaks: insert `\\` where needed to avoid overflow in print layouts.
 - Printing: `ipycalc` includes an `nbconvert` template named `ipycalc` that behaves like `webpdf`, but with improved margins and better page-break behavior after headers.
 - Numbered/sectioned printing: use the `ipycalc_numbered` exporter to automatically number section headers (`h2` and below). This is useful for formal calculation packages where references to section numbers are required.
-- Print tags:
+- Tag a cell with one of the following tags to change the way it prints to PDF:
 	- `hide_cell` excludes the entire cell.
 	- `hide_input` prints output only.
 - In Jupyter, export with:
