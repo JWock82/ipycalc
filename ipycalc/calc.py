@@ -381,65 +381,19 @@ def process_line(calc_line, local_ns):
     reference = reference.replace('&', r'\&')
 
     # Return the line formatted in all its glory.
-    # linebreaks() splits each column's text on "\\" linebreak markers and returns
-    # a list of individually formatted lines. For example, if description has 2 lines
-    # and reference has 1, we get desc=['line1','line2'], ref=['line1'].
-    # We then emit one parent array row per index, filling in blanks for shorter columns.
-    # This guarantees the first line of each column sits on the same row (top-aligned).
+    # linebreaks() now returns one formatted string per column. If the user inserted
+    # manual "\\" linebreak markers, that content is contained in a nested cell array,
+    # so the parent table can stay one row per description/calculation/reference entry.
 
-    # Get the list of formatted lines for the description column (left column)
+    # Get the formatted description cell (left column)
     desc = linebreaks(description, 'text')
-    # Get the list of formatted lines for the equation column (middle column)
+    # Get the formatted equation cell (middle column)
     eq = linebreaks(latex_variable + latex_equation + latex_value, 'math')
-    # Get the list of formatted lines for the reference column (right column)
+    # Get the formatted reference cell (right column)
     ref = linebreaks(reference, 'text')
 
-    def compact_multiline_text_cell(raw_text):
-        # Split on user-entered "\\" markers so each authored continuation line is preserved.
-        # Example: "Line A\\Line B" -> ["Line A", "Line B"]
-        text_lines = raw_text.split('\\\\')
-
-        # Build each rendered line explicitly so blank lines can be handled safely.
-        compact_lines = []
-        for ln in text_lines:
-            if ln:
-                # Keep text columns in sans-serif to match existing description/reference styling.
-                compact_lines.append('\\textsf{' + ln + '}')
-            else:
-                # Use a non-breaking placeholder so intentionally blank lines still occupy
-                # vertical space in the nested array instead of collapsing.
-                compact_lines.append('\\textsf{~}')
-
-        # Render all continuation lines inside one nested array cell.
-        # This avoids forcing continuation text onto additional parent rows, which is what
-        # previously created large visual gaps when the equation column had tall content.
-        #
-        # `\\hspace{-0.5em}` trims nested-array side padding so multiline description/reference
-        # blocks visually align with single-line rows.
-        return '{\\small{\\hspace{-0.5em}\\begin{array}{l}' + '\\\\'.join(compact_lines) + '\\end{array}\\hspace{-0.5em}}}'
-
-    # If description spans multiple authored lines, collapse those lines into a single compact
-    # cell entry. The compact cell still occupies row 1, so top-justification is preserved.
-    if len(desc) > 1:
-        desc = [compact_multiline_text_cell(description)]
-    # Apply the same compact-cell rule to multiline references for consistent behavior.
-    if len(ref) > 1:
-        ref = [compact_multiline_text_cell(reference)]
-
-    # Determine how many parent rows we need (driven by the column with the most lines)
-    n = max(len(desc), len(eq), len(ref))
-    # Initialize the output string that will hold all the rows for this calc line
-    latex_text = ''
-    # Loop through each row index
-    for i in range(n):
-        # Use the description line at this index, or blank if the column is shorter
-        d = desc[i] if i < len(desc) else ''
-        # Use the equation line at this index, or blank if the column is shorter
-        e = eq[i] if i < len(eq) else ''
-        # Use the reference line at this index, or blank if the column is shorter
-        r = ref[i] if i < len(ref) else ''
-        # Assemble the three cells into one parent array row separated by & delimiters
-        latex_text += d + '&' + e + '&' + r + '\\\\ \n'
+    # Assemble one parent row for this calc line.
+    latex_text = desc + '&' + eq + '&' + ref + '\\\\ \n'
 
     # There will be a double equals sign if the equation is not being displayed
     latex_text = latex_text.replace('==', '=')
@@ -829,38 +783,72 @@ def funit(value, precision=None):
     return latex_value
 
 def linebreaks(text, format='text'):
-    
-    # This function splits a cell's text on "\\\\" linebreak markers and returns a list
-    # of formatted lines. Previously this wrapped lines in a nested \\begin{array} mini-table,
-    # but KaTeX does not support [t] top-alignment on nested arrays. Instead, each line
-    # is returned separately so the caller can emit them as individual parent array rows.
-    # This ensures top-left alignment across all columns and works with both KaTeX and MathJax.
+    """
+    Format a single table cell, supporting manual "\\" linebreak markers.
 
-    # Split the text on "\\\\" (which is how the user writes linebreaks in their input)
+    Returns one string per cell. For multiline content, this uses a nested array so the
+    parent table can remain one row per calc line.
+    """
+
+    def format_text_line(line):
+        """
+        Format one text line while preserving inline math delimited by $...$.
+
+        Text outside math is wrapped in \textsf{...}; math segments are emitted as-is.
+        """
+        if line == '':
+            return ''
+
+        pieces = []
+        # Split into alternating [text, math, text, math, ...] pieces.
+        segments = line.split('$')
+        for i, seg in enumerate(segments):
+            if seg == '':
+                continue
+
+            if i % 2 == 0:
+                # Text segment outside $...$.
+                pieces.append('\\textsf{' + seg + '}')
+            else:
+                # Math segment inside $...$ (drop delimiters because we are already in math mode).
+                pieces.append(seg)
+
+        if not pieces:
+            return ''
+
+        return '{\\small{' + ''.join(pieces) + '}}'
+
+    # Split the text on "\\" markers entered by the user.
     lines = text.split('\\\\')
 
-    # Format text columns (description, reference) as sans-serif
     if format == 'text':
-        # Wrap each non-empty line in \\small and \\textsf for consistent text formatting
-        # Empty lines become empty strings (blank cells in that row)
-        return ['{\\small{\\textsf{' + ln + '}}}' if ln else '' for ln in lines]
-    
-    # Format math columns (equation) with indentation on continuation lines
+        # Description/reference cells use sans-serif text while preserving inline math.
+        formatted_lines = [format_text_line(ln) for ln in lines]
     else:
-        result = []
-        # Step through each line with its index
-        for i, ln in enumerate(lines):
-            # Empty lines become blank cells
-            if not ln:
-                result.append('')
-            # The first line renders at normal position (no indent)
-            elif i == 0:
-                result.append('{\\small{' + ln + '}}')
-            # Continuation lines get a 2em indent so it's clear they belong to the line above
-            else:
-                result.append('\\hspace{2em}{\\small{' + ln + '}}')
-        # Return the list of formatted math lines
-        return result
+        # Equation cells keep previous continuation indent behavior.
+        formatted_lines = []  # Collect formatted equation lines for this cell.
+        for i, ln in enumerate(lines):  # Iterate through each split line with its index.
+            if not ln:  # Preserve intentionally blank lines as empty entries.
+                formatted_lines.append('')  # Emit an empty rendered line.
+            elif i == 0:  # First equation line should start flush-left in the cell.
+                formatted_lines.append('{\\small{' + ln + '}}')  # Render first line without indent.
+            else:  # Continuation equation lines are visually indented.
+                formatted_lines.append('\\hspace{2em}{\\small{' + ln + '}}')  # Add 2em indent for wrapped math lines.
+
+    # Single-line cells don't need a nested structure.
+    if len(formatted_lines) == 1:
+        return formatted_lines[0]
+
+    # Multiline cells are represented with a nested array so the parent table stays one row.
+    # KaTeX does not support @{} column modifiers in array alignment preambles.
+    nested = '\\begin{array}{l}' + '\\\\'.join(formatted_lines) + '\\end{array}'
+
+    # Text columns get small negative spacing to offset default array side padding.
+    # This removes the visual indent while staying KaTeX-compatible.
+    if format == 'text':
+        return '{\\hspace{-0.5em}' + nested + '\\hspace{-0.5em}}'
+
+    return nested
 
 #%%
 def _resolve_notebook_path(notebook_name):
