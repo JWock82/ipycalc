@@ -113,9 +113,14 @@ def calc(line, cell, local_ns):
 #%%
 def sync_namespaces(local_ns):
     
+    # Names that belong to ipycalc internals and must never be overwritten by
+    # user-namespace variables (e.g. the __init__ wrapper that would cause
+    # infinite recursion if it displaced the real calc.py implementation).
+    _protected = frozenset({'import_vars', 'save_vars', 'ureg', 'funit'})
+
     # Sync all of this module's global variables with IPython's latest variables.
     for var in local_ns.keys():
-        if var[0] != '_':
+        if var[0] != '_' and var not in _protected:
             exec('global ' + var + '; ' + var + ' = local_ns[var]')
 
     # Create shortcuts to the unit registry's units in the IPython console's namespace
