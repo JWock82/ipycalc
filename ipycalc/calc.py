@@ -847,11 +847,9 @@ def linebreaks(text, format='text'):
     # Multiline cells are represented with a nested array so the parent table stays one row.
     # KaTeX does not support @{} column modifiers in array alignment preambles.
     nested = '\\begin{array}{l}' + '\\\\'.join(formatted_lines) + '\\end{array}'
-
-    # Text columns get small negative spacing to offset default array side padding.
-    # This removes the visual indent while staying KaTeX-compatible.
+    
     if format == 'text':
-        return '{\\hspace{-0.5em}' + nested + '\\hspace{-0.5em}}'
+        return '{' + nested + '}'
 
     return nested
 
