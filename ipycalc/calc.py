@@ -118,10 +118,9 @@ def sync_namespaces(local_ns):
     # infinite recursion if it displaced the real calc.py implementation).
     _protected = frozenset({'import_vars', 'save_vars', 'ureg', 'funit'})
 
-    # Sync all of this module's global variables with IPython's latest variables.
-    for var in local_ns.keys():
-        if var[0] != '_' and var not in _protected:
-            exec('global ' + var + '; ' + var + ' = local_ns[var]')
+    # Snapshot user variables before unit shortcuts can overwrite them.
+    _user_vars = {var: val for var, val in local_ns.items()
+                  if var[0] != '_' and var not in _protected}
 
     # Create shortcuts to the unit registry's units in the IPython console's namespace
     local_ns['inch'] = ureg.inch
@@ -178,6 +177,14 @@ def sync_namespaces(local_ns):
     local_ns['tonnef'] = ureg.tonnef
     local_ns['percent'] = ureg.percent
     local_ns['pct'] = ureg.pct
+
+    # Restore user variables, letting them overwrite any unit shortcuts of the same name.
+    local_ns.update(_user_vars)
+
+    # Sync local_ns (units + user variables) into this module's globals.
+    for var in local_ns.keys():
+        if var[0] != '_' and var not in _protected:
+            exec('global ' + var + '; ' + var + ' = local_ns[var]')
 
     # Provide the IPython console with access to save_vars and import_vars
     local_ns['save_vars'] = save_vars
