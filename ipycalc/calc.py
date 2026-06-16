@@ -79,6 +79,11 @@ unit_list = ['inch', 'feet', 'ft', 'mi', 'ozf', 'lbf', 'lbm', 'kip', 'ton', 'ton
              'rpm', 'Hz', 'deg', 'rad', 'sec', 'minute', 'hr', 'gal', 'degF', 'degC', 'mm', 'cm', 'm', 'km', 'N', 'kN', 'kgf', 'tonne', 'tonnef', 'Pa',
              'kPa', 'MPa', 'GPa', 'percent', 'pct']
 
+
+def cot(x):
+    """Cotangent helper exposed to calc expression evaluation."""
+    return 1 / tan(x)
+
 #%%
 @register_cell_magic
 @needs_local_scope
@@ -475,10 +480,24 @@ def python_to_latex(text):
     # Define a list of greek symbols
     greek = (['alpha', 'eta', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'omega', 'Alpha', 'Eta', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Theta', 'Iota', 'Kappa', 'Lambda', 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega'])
     
+    # Protect quoted text blocks (\textsf{...}) from Greek conversion.
+    # Users can escape a Greek symbol name with quotes, e.g. A_'pi' renders
+    # subscript "pi" as literal text rather than the Greek letter π.
+    _prot_map = {}
+    def _save_prot(m, _map=_prot_map):
+        k = f'XTEXTPROTX{len(_map)}XENDX'
+        _map[k] = m.group(0)
+        return k
+    text = re.sub(r'\\textsf\{[^}]*\}', _save_prot, text)
+
     # Clean up any greek symbols
     for symbol in greek:
         if symbol in text:
             text = text.replace(symbol, '\\' + symbol + '~')
+
+    # Restore protected quoted text blocks
+    for k, v in _prot_map.items():
+        text = text.replace(k, v)
     
     # Fix any errors caused by `eta` being similar to other symbols
     text = text.replace('b\\eta', '\\beta')
@@ -492,6 +511,7 @@ def python_to_latex(text):
     text = text.replace('sin(', '\\sin(')
     text = text.replace('cos(', '\\cos(')
     text = text.replace('tan(', '\\tan(')
+    text = text.replace('cot(', '\\cot(')
     text = text.replace('a\\sin(', '\\arcsin(')
     text = text.replace('a\\cos(', '\\arccos(')
     text = text.replace('a\\tan(', '\\arctan(')

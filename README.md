@@ -56,6 +56,7 @@ Example (flexural strength of a concrete beam):
 - Stacked fractions: wrap numerator and denominator in parentheses, for example `(num)/(denom)` renders as $\dfrac{num}{denom}$.
 - Conditionals: use Python inline ternary notation.
 - Square roots: use `sqrt`.
+- Trig functions: use `sin`, `cos`, `tan`, and `cot`.
 - Prime notation: use `^prime`.
 - Manual line breaks: insert `\\` where needed to avoid overflow in print layouts.
 - Printing: `ipycalc` includes an `nbconvert` template named `ipycalc` that behaves like `webpdf`, but with improved margins and better page-break behavior after headers.
