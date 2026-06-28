@@ -853,6 +853,14 @@ def linebreaks(text, format='text'):
     # Split the text on "\\" markers entered by the user.
     lines = text.split('\\\\')
 
+    # KaTeX requires \left/\right delimiter pairs to stay balanced within each row.
+    # If a user inserts a manual line break inside those delimiters, replace them with
+    # regular delimiters so multiline rows still render.
+    if format != 'text' and len(lines) > 1:
+        text = re.sub(r'\\left\s*', '', text)
+        text = re.sub(r'\\right\s*', '', text)
+        lines = text.split('\\\\')
+
     if format == 'text':
         # Description/reference cells use sans-serif text while preserving inline math.
         formatted_lines = [format_text_line(ln) for ln in lines]
