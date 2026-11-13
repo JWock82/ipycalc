@@ -1155,3 +1155,10 @@ def import_vars(notebook_name, *var_names):
         print(f"Error importing variables: {str(e)}")
     except Exception as e:
         print(f"Unexpected error importing variables: {str(e)}")
+
+
+# Wait until all helpers are defined before exposing them in the user namespace.
+_ipython = get_ipython()
+# Synchronize only when an IPython shell is available.
+if _ipython is not None:
+    sync_namespaces(_ipython.user_ns)
