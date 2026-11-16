@@ -78,6 +78,10 @@ class ipycalcExporter(WebPDFExporter):
         self.exclude_input_prompt = True
         self.exclude_output_prompt = True
 
+    # Override nbconvert's Markdown filter so both ipycalc exporters can prepare
+    # and embed cell attachments while retaining nbconvert's normal rendering.
+    # Jinja's pass_context decorator supplies the active template context as
+    # the context argument, followed by the Markdown source being rendered.
     @pass_context
     def markdown2html(self, context, source):
         """Render Markdown and embed images attached to the current cell."""

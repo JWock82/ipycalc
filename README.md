@@ -59,7 +59,7 @@ Example (flexural strength of a concrete beam):
 - Trig functions: use `sin`, `cos`, `tan`, and `cot`.
 - Prime notation: use `^prime`.
 - Manual line breaks: insert `\\` where needed to avoid overflow in print layouts.
-- Printing: `ipycalc` includes an `nbconvert` template named `ipycalc` that behaves like `webpdf`, but with improved margins and better page-break behavior after headers.
+- Printing: `ipycalc` includes an `nbconvert` template named `ipycalc` that behaves like `webpdf`, but with improved margins, better page-break behavior after headers, and a footer with the notebook filename and page number.
 - Numbered/sectioned printing: use the `ipycalc_numbered` exporter to automatically number section headers (`h2` and below). This is useful for formal calculation packages where references to section numbers are required.
 - Tag a cell with one of the following tags to change the way it prints to PDF:
 	- `hide_cell` excludes the entire cell.

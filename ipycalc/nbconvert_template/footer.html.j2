@@ -1,0 +1,16 @@
+<style>
+@page {
+    @bottom-left {
+        content: "{{ (resources.metadata.name ~ '.ipynb') | replace('\\', '\\\\') | replace('"', '\\"') | replace('<', '\\3c ') | replace('\n', '\\a ') | replace('\r', '\\d ') | replace('\f', '\\c ') }}";
+        font: 9pt sans-serif;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        font: 9pt sans-serif;
+        white-space: nowrap;
+    }
+}
+</style>
